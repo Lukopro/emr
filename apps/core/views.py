@@ -1,5 +1,3 @@
-from turtledemo.clock import display_date_time
-
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
@@ -68,6 +66,12 @@ def patient_registration(request):
         phone = request.POST.get('phone')
 
         date_of_birth = request.POST.get('date_of_birth')
+        try:
+            date_of_birth = datetime.strptime(date_of_birth, "%Y-%m-%d").date()
+        except ValueError:
+            messages.error(request, "Invalid date of birth")
+            return redirect("patient_registration")
+
         gender = request.POST.get('gender')
         street = request.POST.get('street')
         city = request.POST.get('city')
@@ -105,7 +109,7 @@ def patient_registration(request):
 
                 Patient.objects.create(
                     user=user,
-                    date_of_birth=datetime.strptime(date_of_birth, "%Y-%m-%d").date(),
+                    date_of_birth=date_of_birth,
                     gender=gender,
                     street=street,
                     city=city,
@@ -132,7 +136,19 @@ def appointment_scheduling(request):
     if request.method == "POST":
         provider_id = request.POST.get('provider_id')
         date = request.POST.get('date')
+        try:
+            date = datetime.strptime(date, "%Y-%m-%d").date()
+        except ValueError:
+            messages.error(request, "Invalid date")
+            redirect("appointment_scheduling")
+
         time = request.POST.get('time')
+        try:
+            time = datetime.strptime(time, "%H:%M").time()
+        except ValueError:
+            messages.error(request, "Invalid time")
+            redirect("appointment_scheduling")
+
         location = request.POST.get('location')
         visit_type = request.POST.get('visit_type')
 
@@ -142,8 +158,6 @@ def appointment_scheduling(request):
 
         try:
             provider = ClinicalStaff.objects.get(user_id=provider_id)
-            date = datetime.strptime(date, "%Y-%m-%d").date()
-            time = datetime.strptime(time, "%H:%M").time()
 
             Appointment.objects.create(
                 patient=patient,
@@ -224,8 +238,13 @@ def create_clinical_staff(request):
     phone = request.POST.get("phone")
 
     license_number = request.POST.get("license_number")
-    speciality = request.POST.get("speciality")
+    specialization = request.POST.get("specialization")
     hire_date = request.POST.get("hire_date")
+    try:
+        hire_date = datetime.strptime(hire_date, "%Y-%m-%d").date()
+    except ValueError:
+        messages.error(request, "Invalid date")
+        return redirect("admin_dashboard")
 
     required = [username, password, email, phone, license_number, speciality, hire_date]
     if any(not f for f in required):
@@ -251,7 +270,7 @@ def create_clinical_staff(request):
             ClinicalStaff.objects.create(
                 user=user,
                 license_number=license_number,
-                speciality=speciality,
+                specialization=specialization,
                 hire_date=hire_date,
             )
 
