@@ -1,0 +1,36 @@
+.hero {
+    text-align: left;
+
+}
+
+.search-bar {
+    width: 100%;
+    padding: 12px 20px 12px 40px;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+    margin-top: 15px;
+}
+.role-badge {
+    background-color: rgba(255,255,255,.02);
+    color: white;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+.search-wrapper {
+    position: relative;
+    margin-top: 15px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 60%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none;
+}
+.search-bar {
+    padding-left: 40px;
+}

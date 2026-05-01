@@ -1,0 +1,218 @@
+/* Shared styling across pages */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #3b82f6;
+
+}
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.nav-left h1{
+    font-size: 22px;
+    color: white;
+    font-weight: 700;
+}
+.nav-right {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.hero {
+    background-color: #3b82f6;
+    text-align: center;
+    padding: 40px;
+    color: white;
+}
+.hero-welcome {
+    font-size: 28px;
+    font-weight:700;
+    color: white;
+}
+
+.hero-sub {
+    font-size: 14px;
+    color: rgba(255,255,255,0.8);
+    margin-top: 5px;
+}
+.main-content {
+    display: flex;
+    align-items: stretch;
+    gap: 20px;
+    padding: 20px;
+}
+.left-column {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    flex: 2;
+}
+.right-column {
+    flex: 1;
+}
+.section-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+}
+
+.section-header span {
+    font-weight: 600;
+    font-size: 15px;
+}
+.avatar {
+    background-color: white;
+    color: #3b82f6;
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+
+}
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f0f4ff;
+    margin: 0;
+    font-family: Arial, sans-serif;
+
+}
+
+.section-header a {
+    font-size: 13px;
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.placeholder-text {
+    color: #aaa;
+    text-align: center;
+    padding: 20px 0;
+}
+
+.icon-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+/*overlay css*/
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background-color: white;
+    border-radius: 12px;
+    padding: 30px;
+    width: 90%;
+    max-width: 500px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-header h2 {
+   font-size: 18px;
+   color: #1e293b;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 16px;
+    cursor: pointer;
+    color: #888;
+    width: auto;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 20px;
+}
+
+.cancel-btn {
+    background: none;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    color: #666;
+    width: auto;
+}
+
+.confirm-btn {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+    width: auto;
+}
+
+.modal-note {
+    font-size: 13px;
+    color: #888;
+    margin: 15px 0;
+}
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+.input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #333;
+}
+.input-group input, .input-group select {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+}
+
+.input-row .input-group {
+    flex: 1;
+}

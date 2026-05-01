@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Medical Records Page</title>
+    {% load static %}
+    <link rel="stylesheet" href = "{% static 'global.css' %}" />
+    <link rel="stylesheet" href = "{% static 'medical_records.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-left">
+        <button class ="back-btn" onclick="window.location.href='{% url 'patient_dashboard' %}'">
+            <i class="fa-solid fa-arrow-left"></i></button>
+        <h1>HealthPath</h1>
+    </div>
+    <div class="nav-right">
+      <button class = "icon-btn"><i class = "fa-solid fa-bell"></i></button>
+      <div class ="avatar" id="user-avatar"></div>
+    </div>
+</div>
+<div class="hero">
+    <h2 class="page-title"> Medical records</h2>
+    <p class="patient-name" id ="patient-name">placeholder-name</p>
+    <div class="hero-filters">
+        <div class="search-wrapper">
+        <i class = "fa-solid fa-magnifying-glass search-icon"></i>
+        <input class ="search-bar" type="text" placeholder="Search records...">
+    </div>
+    <select class="filter-select">
+        <option>All catergories</option>
+    </select>
+    <select class="filter-select">
+        <option>All time</option>
+    </select>
+    </div>
+
+</div>
+<div class="tab-row">
+    <button class="tab active-tab" onclick="switchTab(this)">Visits</button>
+    <button class="tab"onclick="switchTab(this)">Prescriptions</button>
+    <button class="tab"onclick="switchTab(this)">Test results</button>
+</div>
+<div class ="section-card records-card">
+    <p class="placeholder-text" id="records-placeholder">No records found</p>
+</div>
+<div class="modal-overlay" id="edit-record-modal" style="display: none;">
+    <div class="modal modal-large">
+        <div class="modal-header">
+            <h2>Edit Clinical Record</h2>
+            <button class="modal-close" onclick="closeRecordModal()">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="input-group">
+                <label>Clinical Notes</label>
+                <textarea id="edit-clinical-notes" placeholder="Enter clinical notes..." rows="6"></textarea>
+            </div>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Diagnosis</label>
+                    <input type="text" id="edit-diagnosis" placeholder="Enter diagnosis">
+                </div>
+                <div class="input-group">
+                    <label>Treatment Plan</label>
+                    <input type="text" id="edit-treatment" placeholder="Enter treatment">
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeRecordModal()">Cancel</button>
+            <button class="confirm-btn" onclick="saveRecord()">Save Record</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    function switchTab(clickedTab) {
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.classList.remove('active-tab');
+        });
+
+        clickedTab.classList.add('active-tab');
+        const tabName = clickedTab.textContent;
+        const placeholder = document.getElementById('records-placeholder');
+
+        if (tabName === 'Visits') {
+            placeholder.textContent = 'No visits found';
+        } else if (tabName ==='Prescriptions') {
+            placeholder.textContent = 'No prescriptions found';
+        } else if (tabName === 'Test results') {
+            placeholder.textContent = 'No test results found';
+        }
+    }
+    function openRecordModal(){
+        document.getElementById('edit-record-modal').style.display ='flex';
+    }
+
+    function closeRecordModal(){
+        document.getElementById('edit-record-modal').style.display ='none';
+    }
+    //send data to backend
+    function saveRecord(){
+        closeRecordModal();
+    }
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+        const tab = params.get('tab');
+        if (tab === 'prescriptions') {
+            switchTab(document.querySelectorAll('.tab')[1]);
+        } else if (tab === 'testresults') {
+            switchTab(document.querySelectorAll('.tab')[2]);
+        }
+    }
+    
+</script>
+</body>
+</html>

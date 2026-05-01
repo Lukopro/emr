@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrator Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href = "{% static 'global.css' %}" />
+    <link rel="stylesheet" href = "{% static 'admin_dashboard.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-left">
+        <h1>HealthPath</h1>
+        <button class ="menu-btn" onclick="logout()">☰</button>
+    </div>
+    <div class="nav-right">
+      <button class = "icon-btn"><i class = "fa-solid fa-bell"></i></button>
+      <div class = "role-badge" id="user-role">placeholder role</div>
+      <div class ="avatar" id="user-avatar"></div>
+    </div>
+
+</div>
+<div class="hero">
+    <div class="hero-welcome" id ="greeting">placeholder greeting</div>
+    <div class="hero-sub" id ="current-date">placeholder date</div>
+        <div class="search-wrapper">
+        <i class = "fa-solid fa-magnifying-glass search-icon"></i>
+        <input class ="search-bar" type="text" placeholder="Search patients by name or ID...">
+    </div>
+    </div>
+<div class="register-card">
+<div class="register-left">
+    <i class="fa-solid fa-user-plus register-icon"></i>
+    <span>Register new staff member</span>
+</div>
+<button class="register-btn" onclick="openAddStaffModal()">Register</button>
+</div>
+<div class = "main-content">
+    <div class = "left-column">
+        <div class="section-card">
+            <div class = "section-header">      
+            <span> System activity & audit log </span>
+            <a href ="#"> View full log</a>
+        </div>
+        <p class="placeholder-text">No recent activity</p>
+    </div>
+    
+    </div>
+
+    <div class = "right-column">
+        <div class="section-card">
+            <div class = "section-header">      
+            <span> Notifications </span>
+            <a href ="#"> Mark all read</a>
+        </div>
+        <p class="placeholder-text">No notifications</p>
+    </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="add-staff-modal" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Register New Staff Member</h2>
+            <button class="modal-close" onclick="closeAddStaffModal()">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="input-row">
+                <div class="input-group">
+                    <label>First Name</label>
+                    <input type="text" id="staff-firstname" placeholder="First name">
+                </div>
+                <div class="input-group">
+                    <label>Last Name</label>
+                    <input type="text" id="staff-lastname" placeholder="Last name">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Role</label>
+                <select id="staff-role">
+                    <option>Select role</option>
+                    <option>Physician</option>
+                    <option>Nurse</option>
+                    <option>Administrator</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Email Address</label>
+                <input type="email" id="staff-email" placeholder="Email address">
+            </div>
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="tel" id="staff-phone" placeholder="Phone number">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeAddStaffModal()">Cancel</button>
+            <button class="confirm-btn" onclick="submitStaffForm()">Register Staff</button>
+        </div>
+    </div>
+    </div>
+    <script>
+        function openAddStaffModal() {
+            document.getElementById('add-staff-modal').style.display = 'flex';
+        }
+        
+        function closeAddStaffModal() {
+            document.getElementById('add-staff-modal').style.display = 'none';
+        }
+
+        function submitStaffForm() {
+            const firstName = document.getElementById('staff-firstname').value;
+            const lastName = document.getElementById('staff-lastname').value;
+            const role = document.getElementById('staff-role').value;
+            const email = document.getElementById('staff-email').value;
+            const phone = document.getElementById('staff-phone').value;
+
+            if (!firstName || !lastName || role === 'Select role' || !email || !phone) {
+                alert('Please fill in all fields');
+                return;
+            }
+
+            alert('Staff member registered successfully!');
+            closeAddStaffModal();
+        }
+    function logout(){
+        window.location.href = "{% url 'emr_login' %}";
+    }
+    </script>
+</body>
+</html>

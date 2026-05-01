@@ -1,0 +1,56 @@
+.register-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: white;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.register-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.register-icon {
+    color: #3b82f6;
+    font-size: 18px;
+}
+
+.register-btn {
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: auto;
+}
+.hero {
+    text-align: left;
+    padding-left: 40px;
+}
+
+.search-wrapper {
+    position: relative;
+    margin-top: 15px;
+    max-width: 600px;
+}
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none;
+}
+.search-bar {
+    width: 100%;
+    padding: 12px 20px 12px 40px;
+    border: none;
+    border-radius: 25px;
+    font-size: 15px;
+}

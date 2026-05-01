@@ -1,0 +1,30 @@
+.quick-actions {
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+}
+
+.qa-card {
+    flex: 1;
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+}
+
+
+.qa-icon {
+    font-size: 24px;
+    color: #3b82f6;
+    margin-bottom: 8px;
+}
+
+.qa-card:hover {
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transform: translateY(-2px);
+    transition: all .2s ease;
+}

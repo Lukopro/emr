@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href = "{% static 'global.css' %}" />
+    <link rel="stylesheet" href = "{% static 'patient_dashboard.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class="navbar">
+    <div class="nav-left">
+        <h1>HealthPath</h1>
+        <button class ="menu-btn" onclick="logout()">☰</button>
+    </div>
+    <div class="nav-right">
+      <button class = "icon-btn"><i class = "fa-solid fa-bell"></i></button>
+      <div class = "avatar">BB</div>
+    </div>
+</div>
+
+<div class="hero">
+    <div class="hero-welcome">
+      Welcome, Benjamin!
+    </div>
+    <div class="hero-sub">Sunday, March 29, 2026</div>
+  </div>
+
+<div class="quick-actions">
+    <a href="{% url 'appointment_scheduling' %}" class="qa-card">
+        <i class="fa-solid fa-calendar-days qa-icon"></i>
+        <div class="qa-label">Schedule appointment</div>
+    </a>
+    <a href="{% url 'medical_records' %}" class="qa-card">
+        <i class ="fa-solid fa-folder-open qa-icon"></i>
+        <div class="qa-label">Medical records</div>
+    </a>
+    <a href="{% url 'medical_records' %}?tab=testresults" class="qa-card">
+        <i class ="fa-solid fa-flask qa-icon"></i>
+        <div class="qa-label">Test results</div>
+    </a>
+    <a href="{% url 'medical_records' %}?tab=prescriptions"class="qa-card">
+        <i class ="fa-solid fa-pills qa-icon"></i>
+        <div class="qa-label">Medications</div>
+    </a>
+    <a href="{% url 'patient_profile' %}"class="qa-card">
+        <i class ="fa-solid fa-user qa-icon"></i>
+        <div class="qa-label">My profile</div>
+    </a>
+  </div>
+
+  <div class = "main-content">
+    <div class = "left-column">
+        <div class="section-card">
+            <div class = "section-header">      
+            <span> Upcoming appointments </span>
+            <a href ="#"> View all</a>
+        </div>
+        <p class="placeholder-text">No upcoming appointments</p>
+    </div>
+    
+        <div class="section-card">
+            <div class = "section-header">      
+            <span> Recent Results </span>
+            <a href ="#"> View all</a>
+        </div>
+        <p class="placeholder-text">No recent results</p>
+    </div>
+    </div>
+
+    <div class = "right-column">
+        <div class="section-card">
+            <div class = "section-header">      
+            <span> Notifications </span>
+            <a href ="#"> Mark all read</a>
+        </div>
+        <p class="placeholder-text">No notifications</p>
+    </div>
+    </div>
+  </div>
+  <script>
+    function logout(){
+        window.location.href = "{% url 'emr_login' %}";
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,151 @@
+body {
+    display: flex;
+    justify-content: center;
+    background-color: #f0f4ff;
+    padding: 40px 20px;
+    font-family: Arial, sans-serif;
+}
+
+.reg-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 700px;
+    
+}
+
+.reg-logo {
+    background-color: #3b82f6;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.reg-logo i {
+    color:white;
+    font-size: 28px;
+
+}
+
+.reg-card {
+    background-color: white;
+    border-radius: 12px;
+    padding: 30px;
+    width: 100%;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.reg-section {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.section-title {
+    color: #3b82f6;
+    font-size: 14px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin-bottom: 15px;
+}
+
+.input-row {
+    display: flex;
+    gap: 15px;
+}
+
+.input-row .input-group {
+    flex: 1;
+}
+
+.input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-bottom: 15px;
+}
+
+.input-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color:#333;
+}
+
+.input-group input, .input-group select {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    background-color: #f8faff;
+}
+.submit-btn {
+    width: 100%;
+    padding: 12px;
+    background-color: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.login-link {
+    text-align: center;
+    margin-top: 15px;
+    font-size: 14px;
+    color: #666;
+}
+.login-link a {
+    color: #3b82f6;
+    text-decoration: none;
+}
+
+.review-section-title {
+    color: #3b82f6;
+    font-size: 13px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin: 15px 0 10px 0;
+    padding-bottom: 5px;
+    border-bottom: 1px solid #f0f0f0f0;
+}
+.review-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 10px;
+}
+
+.review-item {
+    flex: 1;
+    margin-bottom: 10px;
+}
+
+.review-item {
+    flex: 1;
+    margin-bottom: 8px;
+}
+
+.review-item label {
+    font-size: 11px;
+    color: #888;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    display: block;
+}
+
+.review-item p {
+    font-size: 14px;
+    color: #1e293b;
+    margin: 0;
+}

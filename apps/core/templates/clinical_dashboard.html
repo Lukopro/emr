@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Clinical Dashboard</title>
+    {% load static %}
+    <link rel="stylesheet" href = "{% static 'global.css' %}" />
+    <link rel="stylesheet" href = "{% static 'clinical_dashboard.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    
+
+</head>
+<body>
+    <div class="navbar">
+    <div class="nav-left">
+        <h1>HealthPath</h1>
+        <button class ="menu-btn" onclick="logout()">☰</button>
+    </div>
+    <div class="nav-right">
+      <button class = "icon-btn"><i class = "fa-solid fa-bell"></i></button>
+      <div class = "role-badge" id="user-role">placeholder role</div>
+      <div class ="avatar" id="user-avatar"></div>
+    </div>
+
+</div>
+<div class="hero">
+    <div class="hero-welcome" id ="greeting">placeholder greeting</div>
+    <div class="hero-sub" id ="current-date">placeholder date</div>
+        <div class="search-wrapper">
+        <i class = "fa-solid fa-magnifying-glass search-icon"></i>
+        <input class ="search-bar" type="text" placeholder="Search patients by name or ID...">
+    </div>
+  </div>
+<div class = "main-content">
+    <div class = "left-column">
+        <div class="section-card">
+            <div class = "section-header">      
+            <span> Todays Schedule </span>
+            <a href ="#"> View schedule</a>
+        </div>
+        <p class="placeholder-text">No appointments scheduled</p>
+    </div>
+    
+        <div class="section-card">
+            <div class = "section-header">      
+            <span> Recent Patients </span>
+            <a href ="#"> View all</a>
+        </div>
+        <p class="placeholder-text">No recent results</p>
+    </div>
+    </div>
+
+    <div class = "right-column">
+        <div class="section-card">
+            <div class = "section-header">      
+            <span> Notifications </span>
+            <a href ="#"> Mark all read</a>
+        </div>
+        <p class="placeholder-text">No notifications</p>
+    </div>
+    </div>
+  </div>
+  <script>
+    function logout(){
+        window.location.href = "{% url 'emr_login' %}";
+    }
+  </script>
+</body>
+</html>

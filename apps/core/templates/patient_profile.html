@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Profile</title>
+    {% load static %}
+    <link rel="stylesheet" href = "{% static 'global.css' %}" />
+    <link rel="stylesheet" href = "{% static 'patient_profile.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+    <div class="navbar">
+        <div class="nav-left">
+            <button class="back-btn" onclick="window.location.href='{% url 'patient_dashboard' %}'"><i class="fa-solid fa-arrow-left"></i></button>
+            <h1>HealthPath</h1>
+        </div>
+        <div class="nav-right">
+            <button class = "icon-btn"><i class="fa-solid fa-bell"></i></button>
+        <div class="avatar" id="user-avatar"></div>
+    </div>
+    </div>
+    <div class="hero">
+        <div class="hero-welcome" id="patient-name"> Patient Name</div>
+        <div class="hero-sub">Patient Profile</div>
+    </div>
+
+    <div class="main-content">
+        <div class="left-column">
+            <div class="section-card">
+                <div class="section-header">
+                    <span>Personal Information</span>
+                    <button class="edit-btn" id="personal-info-btn" onclick="openModal('edit-personal-modal')">
+                        <i class="fa-solid fa-lock"></i> Locked</button>
+                </div>
+                <div class="info-row">
+                    <div class="info-item">
+                        <label>Full name</label>
+                        <p id="full-name"> placeholder</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Date of Birth</label>
+                        <p id="dob">placeholder</p>
+                    </div>
+                </div>
+                <div class="info-row">
+                    <div class="info-item">
+                        <label>Gender</label>
+                        <p id="gender">placeholder</p>
+                    </div>
+                </div>
+            </div>
+            <div class="section-card">
+                <div class="section-header">
+                    <span>Contact Information</span>
+                    <button class="edit-btn" onclick="openModal('edit-contact-modal')">
+                        <i class="fa-solid fa-pen"></i> Edit</button>
+                </div>
+                <div class="info-row">
+                    <div class="info-item">
+                        <label>Phone Number</label>
+                        <p id="phone">placeholder</p>
+                    </div>
+                    <div class="info-item">
+                    <label>Email Address</label>
+                    <p id="email">placeholder</p>
+                    </div>
+                </div>
+                    <div class="info-item">
+                        <label>Home Address</label>
+                        <p id="address">placeholder</p>
+                    </div>
+                </div>
+            </div>
+            <div class="right-column">
+                <div class="section-card">
+                    <div class="section-header">
+                        <span>Emergency Contact</span>
+                        <button class="edit-btn" onclick="openModal('edit-emergency-modal')">
+                            <i class="fa-solid fa-pen"></i> Edit</button>
+                    </div>
+                    <div class="info-item">
+                        <label>Full Name</label>
+                        <p id="emergency-name">placeholder</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Relationship</label>
+                        <p id="emergency-relationship">placeholder</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Phone number</label>
+                        <p id="emergency-phone">placeholder</p>
+                    </div>
+                </div>
+                <div class="section-card">
+                    <div class="section-header">
+                        <span> Insurance Details</span>
+                        <button class="edit-btn" onclick="openModal('edit-insurance-modal')">
+                            <i class="fa-solid fa-pen"></i> Edit</button>
+                    </div>
+                    <div class="info-item">
+                        <label>Insurance Provider</label>
+                        <p id="insurance-provider">placeholder</p>
+                    </div>
+                    <div class="info-item">
+                        <label>Policy Number</label>
+                        <p id="policy-number">placeholder</p>
+                    </div>
+                </div>
+                <div class="section-card" id="admin-actions" style="display: none;">
+                    <div class="section-header">
+                        <span>Administrator Actions</span>
+                    </div>
+                    <div class="admin-action-buttons">
+                        <button class="reset-btn" onclick="resetCredentials()">
+                            <i class="fa-solid fa-key"></i>Reset Login Credentials
+                        </button>
+                        <button class="deactivate-btn" onclick="deactivateAccount()">
+                            <i class="fa-solid fa-ban"></i> Deactivate Account
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-overlay" id="edit-contact-modal" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Edit Contact Information</h2>
+            <button class="modal-close" onclick="closeModal('edit-contact-modal')">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Phone Number</label>
+                    <input type="tel" id="edit-phone" placeholder="Phone number">
+                </div>
+                <div class="input-group">
+                    <label>Email Address</label>
+                    <input type="email" id="edit-email" placeholder="Email address">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Home Address</label>
+                <input type="text" id="edit-address" placeholder="Home address">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeModal('edit-contact-modal')">Cancel</button>
+            <button class="confirm-btn" onclick="saveContact()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="edit-emergency-modal" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Edit Emergency Contact</h2>
+            <button class="modal-close" onclick="closeModal('edit-emergency-modal')">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Full Name</label>
+                    <input type="text" id="edit-emergency-name" placeholder="Full name">
+                </div>
+                <div class ="input-group">
+                    <label>Relationship</label>
+                    <input type="text" id="edit-emergency-relationship" placeholder="e.g. Spouse, Parent">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Phone Number</label>
+                <input type="tel" id="edit-emergency-phone" placeholder="Phone number">
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeModal('edit-emergency-modal')">Cancel</button>
+            <button class="confirm-btn" onclick="saveEmergency()">Save Changes</button>
+        </div>
+    </div>
+</div>
+
+<div class="modal-overlay" id="edit-insurance-modal" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Edit Insurance Details</h2>
+            <button class="modal-close" onclick="closeModal('edit-insurance-modal')">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Insurance Provider</label>
+                    <input type="text" id="edit-insurance-provider" placeholder="Insurance provider">
+                </div>
+                <div class ="input-group">
+                    <label>Policy Number</label>
+                    <input type="text" id="edit-policy-number" placeholder="Policy number">
+                </div>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeModal('edit-insurance-modal')">Cancel</button>
+            <button class="confirm-btn" onclick="saveInsurance()">Save Changes</button>
+        </div>
+    </div>
+</div>
+<div class="modal-overlay" id="edit-personal-modal" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Edit Personal Information</h2>
+            <button class="modal-close" onclick="closeModal('edit-personal-modal')">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="input-row">
+                <div class="input-group">
+                <label>Full Name</label>
+                <input type="text" id="edit-full-name" placeholder="Full name">
+                </div>
+                <div class="input-group">
+                    <label>Date of Birth</label>
+                    <input type="date" id="edit-dob">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Gender</label>
+                <select id="edit-gender">
+                    <option>Male</option>
+                    <option>Female</option>
+                    <option>Prefer not to say</option>
+                </select>
+            </div>
+        </div>
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeModal('edit-personal-modal')">Cancel</button>
+            <button class="confirm-btn" onclick="savePersonalInfo()">Save Changes</button>
+        </div>
+    </div>
+</div>
+<script>
+    function openModal (modalId) {
+        document.getElementById(modalId).style.display ='flex';
+    }
+    function closeModal (modalId) {
+        document.getElementById(modalId).style.display ='none';
+    }
+    function saveContact() {
+        closeModal('edit-contact-modal');
+    }
+    function saveEmergency() {
+        closeModal('edit-emergency-modal');
+    }
+    function saveInsurance() {
+        closeModal('edit-insurance-modal');
+    }
+
+    window.onload = function() {
+        const params = new URLSearchParams(window.location.search);
+        const role = params.get('role');
+
+        if (role === 'admin') {
+            document.getElementById('admin-actions').style.display = 'block';
+
+            document.getElementById('personal-info-btn').innerHTML = '<i class="fa-solid fa-pen"></i> Edit';
+            document.getElementById('personal-info-btn').onclick = function() {
+                openModal('edit-personal-modal');
+            };
+        }
+    }
+
+    function resetCredentials() {
+        if(confirm('Are you sure you want to reset this patient\'s login credentials')) {
+            //need to implement API call to reset credentials
+            alert('Credentials reset. Patient will receive an email with setup instructions.');
+        }
+    }
+
+    function deactivateAccount() {
+        if(confirm('Are you sure you want to deactivate this patient\'s account?')) {
+            //need to implement API call to deactivate account
+            alert('Account has been deactivated.');
+        }
+    }
+
+    function savePersonalInfo() {
+        //need top implement API call to update personal info
+        closeModal('edit-personal-modal');
+    }
+</script>
+</body>
+</html>

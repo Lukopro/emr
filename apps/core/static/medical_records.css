@@ -1,0 +1,86 @@
+.hero-filters {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: nowrap;
+}
+
+.search-wrapper {
+    position: relative;
+    
+
+}
+
+.search-icon {
+    position: absolute;
+    left: 15px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #aaa;
+    pointer-events: none;
+
+}
+
+.search-bar {
+    padding: 10px 20px 10px 40px;
+    border: none;
+    border-radius: 25px;
+    font-size: 14px;
+    width:280px;
+}
+
+.filter-select {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+}
+
+.tab-row {
+    display: flex;
+    background-color: white;
+    border-radius: 8px;
+    margin: 20px;
+    padding: 4px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    border-radius: 6px;
+    font-size: 14px;
+    color: #666;
+
+}
+
+.active-tab {
+    background-color: #3b82f6;
+    color: white;
+    font-weight: 600;
+}
+
+.records-card {
+    margin: 0 20px 20px 20px;
+}
+
+.modal-large {
+    max-width: 700px;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 14px;
+    font-family: Arial, sans-serif;
+    resize: vertical;
+    background-color: #f8faff;
+}

@@ -1,0 +1,77 @@
+<!-- EMR Log in-->
+<!-- Benjamin Bina-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EMR Login</title>
+    {% load static %}
+    <link rel="stylesheet" href = "{% static 'global.css' %}" />
+    <link rel="stylesheet" href = "{% static 'emr_login.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+<div class = "logo">
+<i class = "fa-solid fa-stethoscope"></i>
+</div>
+<div class = "page">
+    <h1>Hospital Name</h1>
+    <p>Secure Clinical Access Portal</p>
+</div>
+
+
+<div class ="card">
+    <form method="POST" action="{% url 'emr_login' %}">
+        <div class ="input-group">
+            <label>Username</label>
+            <div class = "input-wrapper">
+                <i class = "fa-solid fa-user input-icon"></i>
+                <input type="text" name="username" placeholder="Enter your clinical ID" required>
+            </div>
+        </div>
+
+        <div class ="input-group">
+            <label>Password</label>
+            <div class = "input-wrapper">
+                <i class = "fa-solid fa-lock input-icon"></i>
+                <input type = "password" name = "password" id = "passwordInput" placeholder = "•••••••" required>
+                <i class = "fa-solid fa-eye eye-icon" onclick ="togglePassword()"></i>
+            </div>
+        </div>
+
+        {% if error %}
+            <p style="color:red; margin-top:10px;">{{ error }}</p>
+        {% endif %}
+
+        <button type="submit">
+            Log In
+        </button>
+    </form>
+
+    <div class="register-link">
+        <a href="{% url 'patient_registration' %}">Register as a new patient</a>
+    </div>
+    
+    <div class = "forgot-password-link">
+        <a href = "#">Forgot Password?</a>
+    </div>
+    <script>
+        function togglePassword() {
+            const input = document.getElementById("passwordInput");
+            const icon = document.querySelector(".eye-icon");
+            if (input.type === "password") {
+                input.type = "text";
+                icon.classList.replace("fa-eye", "fa-eye-slash");
+            } else {
+                input.type = "password";
+                icon.classList.replace("fa-eye-slash", "fa-eye");
+            }
+
+        }
+    </script>
+</div>
+
+
+</body>
+</html>

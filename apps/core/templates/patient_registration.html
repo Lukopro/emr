@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Patient Registration</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'global.css' %}" />
+    <link rel="stylesheet" href="{% static 'patient_registration.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+    <div class="reg-container">
+        <div class="reg-logo">
+            <i class="fa-solid fa-stethoscope"></i>
+        </div>
+        <h1 class ="reg-title"> HealthPath</h1>
+        <p class="reg-subtitle">Patient Registration</p>
+        <div class="reg-card">
+            <div class="reg-section">
+                <h3 class = "section-title">Personal Information</h3>
+                <div class ="input-row">
+                    <div class="input-group">
+                        <label>First Name</label>
+                        <input type="text" id="reg-firstname" placeholder="First name">
+                    </div>
+                    <div class="input-group">
+                        <label>Last Name</label>
+                        <input type="text" id="reg-lastname" placeholder="Last name">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Date of Birth</label>
+                        <input type="date" id="reg-dob">
+                    </div>
+                    <div class="input-group">
+                        <label>Gender</label>
+                        <select id="reg-gender" class ="filter-select">
+                            <option>Select gender</option>
+                            <option>Male</option>
+                            <option>Female</option>
+                            <option>Prefer not to say</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="reg-section">
+                <h3 class="section-title">Contact Details</h3>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="reg-phone" placeholder="Phone number">
+                    </div>
+                    <div class="input-group">
+                        <label>Email Address</label>
+                        <input type="email" id="reg-email" placeholder="Email address">
+                    </div>
+                </div>
+                <div class="input-group">
+                    <label>Home Address</label>
+                    <input type="text" id="reg-address" placeholder="Home address">
+                </div>
+            </div>
+            <div class="reg-section">
+                <h3 class="section-title">Emergency Contact</h3>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Full Name</label>
+                        <input type="text" id="reg-emergency-name" placeholder="Emergency contact name">
+                    </div>
+                    <div class="input-group">
+                        <label>Relationship</label>
+                        <input type="text" id="reg-emergency-relationship" placeholder="Spouse, Family member...">
+                    </div>
+            </div>
+            <div class="input-group">
+                <label>Emergency Contact Phone</label>
+                <input type="text" id="reg-emergency-phone" placeholder="Emergency contact phone">
+            </div>
+        </div>
+        <div class="reg-section">
+            <h3 class="section-title">Insurance Details</h3>
+            <div class="input-row">
+                <div class="input-group">
+                    <label>Insurance Provider</label>
+                    <input type="text" id="reg-insurance-provider" placeholder="Insurance provider">
+                </div>
+                <div class="input-group">
+                    <label>Policy Number</label>
+                    <input type="text" id="reg-policy-number" placeholder="Policy number">
+                </div>
+            </div>
+        </div>
+        <button class="submit-btn" onclick="openReviewModal()">Continue to Review</button>
+        <p class="Login-link">Already have an account? <a href="{% url 'emr_login' %}">Log in</a></p>
+    </div>
+</div>
+    <div class="modal-overlay" id="review-modal" style="display: none;">
+    <div class="modal modal-large">
+        <div class="modal-header">
+            <h2>Review Your Information</h2>
+            <button class="modal-close" onclick="closeReviewModal()">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <h3 class ="review-section-title">Personal Information</h3>
+            <div class="review-row">
+                <div class="review-item">
+                    <label>First Name</label>
+                    <p id="review-firstname"></p>
+                </div>
+                <div class="review-item">
+                    <label>Last Name</label>
+                    <p id="review-lastname"></p>
+                </div>
+            </div>
+            <div class="review-row">
+                <div class="review-item">
+                    <label>Date of Birth</label>
+                    <p id="review-dob"></p>
+                </div>
+                    <div class="review-item">
+                    <label>Gender</label>
+                    <p id="review-gender"></p>
+                </div>
+            </div>
+
+            <h3 class="review-section-title">Contact Details</h3>
+            <div class="review-row">
+                <div class="review-item">
+                    <label>Phone Number</label>
+                    <p id="review-phone"></p>
+                </div>
+                <div class="review-item">
+                    <label>Email Address</label>
+                    <p id="review-email"></p>
+                </div>
+            </div>
+            <div class="review-item">
+                <label>Home Address</label>
+                <p id="review-address"></p>
+            </div>
+
+            <h3 class="review-section-title">Emergency Contact</h3>
+            <div class="review-row">
+                <div class="review-item">
+                    <label>Full Name</label>
+                    <p id="review-emergency-name"></p>
+            </div>
+            <div class="review-item">
+                    <label>Relationship</label>
+                    <p id="review-emergency-relationship"></p>
+            </div>
+        </div>
+            <div class="review-item">
+                <label>Phone Number</label>
+                <p id="review-emergency-phone"></p>
+            </div>
+
+            <h3 class="review-section-title">Insurance Details</h3>
+            <div class="review-row">
+                <div class="review-item">
+                    <label>Insurance Provider</label>
+                    <p id="review-insurance-provider"></p>
+                </div>
+                <div class="review-item">
+                    <label>Policy Number</label>
+                    <p id="review-insurance-policy-number"></p>
+                </div>
+            </div>
+        </div>
+        <p class="modal-note">Please review information carefully before confirming.</p>
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeReviewModal()">Go Back</button>
+            <button class="confirm-btn" onclick="submitRegistration()">Confirm & Submit</button>
+        </div>
+    </div>
+</div>
+<script>
+    function openReviewModal(){
+        document.getElementById('review-firstname').textContent = document.getElementById('reg-firstname').value;
+        document.getElementById('review-lastname').textContent = document.getElementById('reg-lastname').value;
+        document.getElementById('review-dob').textContent = document.getElementById('reg-dob').value;
+        document.getElementById('review-gender').textContent = document.getElementById('reg-gender').value;
+        document.getElementById('review-phone').textContent = document.getElementById('reg-phone').value;
+        document.getElementById('review-email').textContent = document.getElementById('reg-email').value;
+        document.getElementById('review-address').textContent = document.getElementById('reg-address').value;
+        document.getElementById('review-emergency-name').textContent = document.getElementById('reg-emergency-name').value;
+        document.getElementById('review-emergency-relationship').textContent = document.getElementById('reg-emergency-relationship').value;
+        document.getElementById('review-emergency-phone').textContent = document.getElementById('reg-emergency-phone').value;
+        document.getElementById('review-insurance-provider').textContent = document.getElementById('reg-insurance-provider').value;
+        document.getElementById('review-insurance-policy-number').textContent = document.getElementById('reg-policy-number').value;
+        document.getElementById('review-modal').style.display = 'flex';
+    }
+    function closeReviewModal() {
+        document.getElementById('review-modal').style.display= 'none';
+    }
+    function submitRegistration() {
+        alert('Registration submitted successfully');
+        closeReviewModal();
+    }
+</script>
+</body>
+</html>

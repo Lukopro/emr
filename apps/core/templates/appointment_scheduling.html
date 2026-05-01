@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schedule Appointment</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'global.css' %}" />
+    <link rel="stylesheet" href="{% static 'appointment_scheduling.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+ <div class="navbar">
+    <div class="nav-left">
+        <button class="back-btn" onclick = "window.location.href='{% url 'patient_dashboard' %}'"><i class="fa-solid fa-arrow-left"></i></button>
+        <h1>HealthPath</h1>
+    </div>
+    <div class="nav-right">
+        <button class="icon-btn"><i class="fa-solid fa-bell"></i></button>
+        <div class="avatar" id="user-avatar"></div>
+    </div>
+ </div>
+ 
+ <div class="hero">
+    <div class="hero-welcome">Schedule Appointment</div>
+    <div class="hero-sub">Select a provider or a date to get started</div>
+ </div>
+
+ <div class="toggle-row">
+    <button class="toggle-btn active-toggle" onclick="switchView('provider')">
+        <i class="fa-solid fa-calendar"></i> Browse by Provider
+    </button>
+<button class="toggle-btn" onclick="switchView('date')">
+        <i class="fa-solid fa-calendar"></i> Browse by Date
+    </button>
+ </div>
+
+ <div class="main-content" id="provider-view">
+    <div class="left-column">
+        <div class="section-card">
+            <div class="section-header">
+                <span>Select a Provider</span>
+            </div>
+            <p class="placeholder-text">No providers available</p>
+        </div>
+    </div>
+    <div class="right-column">
+        <div class="section-card">
+            <div class="section-header">
+                <span>Available Times</span>
+            </div>
+            <p class="placeholder-text">Select a provider to see available times</p>
+            </div>
+        </div>
+</div>
+
+    <div class="main-content" id="date-view" style="display: none;">
+        <div class="left-column">
+            <div class="section-card">
+                <div class="section-header">
+                    <span>Select a Date</span> 
+            </div>
+            <div class="calendar-placeholder">
+                <div class="calendar-header">
+                    <button class="cal-nav-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <span id="calendar-month">April 2026</span>
+                    <button class="cal-nav-btn"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="calendar-grid">
+                    <div class="cal-day-label">Sun</div>
+                    <div class="cal-day-label">Mon</div>
+                    <div class="cal-day-label">Tue</div>
+                    <div class="cal-day-label">Wed</div>
+                    <div class="cal-day-label">Thu</div>
+                    <div class="cal-day-label">Fri</div>
+                    <div class="cal-day-label">Sat</div>
+                    <div class="cal-day">1</div>
+                    <div class="cal-day">2</div>
+                    <div class="cal-day">3</div>
+                    <div class="cal-day available">4</div>
+                    <div class="cal-day">5</div>
+                    <div class="cal-day">6</div>
+                    <div class="cal-day">7</div>
+                    <div class="cal-day available">8</div>
+                    <div class="cal-day">9</div>
+                    <div class="cal-day">10</div>
+                </div>
+            </div>
+            </div>
+        </div>
+        <div class="right-column">
+        <div class="section-card">
+            <div class="section-header">
+                <span>Available Providers</span>
+            </div>
+            <p class="placeholder-text">Select a date to see available providers</p>
+        </div>
+    </div>
+    </div>
+    
+ </div>
+ <div class="modal-overlay" id="confirmation-modal" style="display: none;">
+    <div class="modal">
+        <div class="modal-header">
+            <h2>Confirm Appointment</h2>
+            <button class="modal-close" onclick="closeModal()">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            <div class="info-item">
+                <label>Provider</label>
+                <p id="confirm-provider">placeholder</p>
+            </div>
+            <div class="info-item">
+                <label>Date</label>
+                <p id="confirm-date">placeholder</p>
+            </div>
+            <div class="info-item">
+                <label>Time</label>
+                <p id="confirm-time">placeholder</p>
+            </div>
+            <div class="info-item">
+                <label>Location</label>
+                <p id="confirm-location">placeholder</p>
+            </div>
+        </div>
+        <p class="modal-note">A confirmation will be sent to your email and phone number.</p>
+        <div class="modal-actions">
+            <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+             <button class="confirm-btn">Confirm Appointment</button>
+        </div>
+    </div>
+ </div>
+
+ <script>
+    function switchView(view) {
+        document.querySelectorAll('.toggle-btn').forEach(btn => {btn.classList.remove('active-toggle');
+        
+        })
+        if (view === 'provider') {
+            document.getElementById('provider-view').style.display = 'flex';
+            document.getElementById('date-view').style.display = 'none';
+            document.querySelectorAll('.toggle-btn')[0].classList.add('active-toggle');
+        } else {
+            document.getElementById('provider-view').style.display = 'none';
+            document.getElementById('date-view').style.display = 'flex';
+            document.querySelectorAll('.toggle-btn')[1].classList.add('active-toggle');
+        }
+    }
+    function closeModal(){
+        document.getElementById('confirmation-modal').style.display = 'none';
+    }
+ </script>
+</body>
+</html>
