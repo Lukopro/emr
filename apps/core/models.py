@@ -140,7 +140,7 @@ class Notification(models.Model):
 
 
 class AuditLog(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True)
 
     action = models.CharField(max_length=50)
     affected_table = models.CharField(max_length=50)

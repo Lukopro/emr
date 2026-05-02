@@ -7,6 +7,7 @@ from datetime import datetime
 from django.contrib import messages
 from django.db import transaction
 from core.models import *
+from django.db import IntegrityError
 
 # Page views
 
@@ -19,6 +20,17 @@ def emr_login(request):
         if user is not None:
             login(request, user)
 
+            AuditLog.objects.create(
+                user=user,
+                action="LOGIN",
+                affected_table=User.__name__,
+                affected_record_id=user.id,
+                description=(
+                    f"User logged in: {username}"
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+
             #RBAC routing
             if user.role == User.Role.ADMIN:
                 return redirect("admin_dashboard")
@@ -26,6 +38,17 @@ def emr_login(request):
                 return redirect("clinical_dashboard")
             else:
                 return redirect("patient_dashboard")
+
+        AuditLog.objects.create(
+            user=user if user else None,
+            action="FAILED_LOGIN",
+            affected_table=User.__name__,
+            affected_record_id=0,
+            description=(
+                f"Failed login attempt for {username}"
+            ),
+            ip_address=request.META.get("REMOTE_ADDR")
+        )
 
         return render(request, 'core/emr_login.html', {
             "error": "Invalid credentials"
@@ -106,7 +129,7 @@ def patient_registration(request):
                 user.role = User.Role.PATIENT
                 user.save()
 
-                Patient.objects.create(
+                patient = Patient.objects.create(
                     user=user,
                     date_of_birth=date_of_birth,
                     gender=gender,
@@ -117,7 +140,31 @@ def patient_registration(request):
                     insurance_provider=insurance_provider,
                     policy_number=policy_number,
                 )
+
+                AuditLog.objects.create(
+                    user=user,
+                    action="CREATE",
+                    affected_table=Patient.__name__,
+                    affected_record_id=patient.id,
+                    description=(
+                        f"Created Patient for new User {username} "
+                        f"(User ID: {user.id})"
+                    ),
+                    ip_address=request.META.get("REMOTE_ADDR")
+                )
+
         except Exception as e:
+            AuditLog.objects.create(
+                user=None,
+                action="FAILED_CREATE",
+                affected_table=Patient.__name__,
+                affected_record_id=0,
+                description=(
+                    f"Failed to create new Patient: {str(e)}"
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+
             return render(request, 'core/patient_registration.html', {
                 "error": f"Registration failed: {e}"
             })
@@ -157,22 +204,75 @@ def appointment_scheduling(request):
 
         try:
             provider = ClinicalStaff.objects.get(user_id=provider_id)
+            with transaction.atomic():
+                appointment = Appointment.objects.create(
+                    patient=patient,
+                    clinical_staff=provider,
+                    date=date,
+                    time=time,
+                    location=location,
+                    visit_type=visit_type,
+                    status=Appointment.Status.PENDING
+                )
 
-            Appointment.objects.create(
-                patient=patient,
-                clinical_staff=provider,
-                date=date,
-                time=time,
-                location=location,
-                visit_type=visit_type,
-                status=Appointment.Status.PENDING
-            )
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="CREATE",
+                    affected_table=Appointment.__name__,
+                    affected_record_id=appointment.id,
+                    description=(
+                        f"Created appointment for {request.user.username} "
+                        f"with provider {provider.user.username} on {date} at {time}"
+                    ),
+                    ip_address=request.META.get("REMOTE_ADDR")
+                )
+
+                # Patient notification
+                Notification.objects.create(
+                    user=request.user,
+                    message=f"Your appointment request for {date} at {time} has been submitted.",
+                    type="APPOINTMENT",
+                )
+
+                # Clinician notification
+                Notification.objects.create(
+                    user=provider.user,
+                    message="An appointment with you has been scheduled, please confirm.",
+                    type="APPOINTMENT",
+                )
 
             messages.success(request, "Appointment requested successfully.")
             return redirect("patient_dashboard")
 
         except ClinicalStaff.DoesNotExist:
+            AuditLog.objects.create(
+                user=request.user,
+                action="FAILED_CREATE",
+                affected_table=Appointment.__name__,
+                affected_record_id=0,
+                description=(
+                    f"Failed to create new Appointment for {request.user.username}: "
+                    f"Provider {provider_id} does not exist."
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+
             messages.error(request, "No clinical staff found.")
+
+        except IntegrityError:
+            AuditLog.objects.create(
+                user=request.user,
+                action="FAILED_CREATE",
+                affected_table=Appointment.__name__,
+                affected_record_id=0,
+                description=(
+                    f"Failed to create new Appointment for {request.user.username}: "
+                    f"Conflicting appointment for {date} at {time}."
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+
+            messages.error(request, "This time slot is already booked, please use another time.")
 
     return render(request, 'core/appointment_scheduling.html', {
         "providers": providers,
@@ -204,8 +304,13 @@ def clinical_dashboard(request):
         status=Appointment.Status.PENDING
     ).order_by("-date", "-time")
 
+    notifications = Notification.objects.filter(
+        user=request.user
+    )
+
     return render(request, 'core/clinical_dashboard.html', {
         "appointments": appointments,
+        "notifications": notifications
     })
 
 @login_required
@@ -222,7 +327,22 @@ def admin_dashboard(request):
 # Action views
 
 def logout_view(request):
+    user = request.user
+    ip = request.META.get("REMOTE_ADDR")
+
     logout(request)
+
+    AuditLog.objects.create(
+        user=user,
+        action="LOGOUT",
+        affected_table=User.__name__,
+        affected_record_id=user.id,
+        description=(
+            f"User logged out: {user.username}"
+        ),
+        ip_address=ip
+    )
+
     return redirect("emr_login")
 
 @login_required
@@ -266,22 +386,45 @@ def create_clinical_staff(request):
             user.role = User.Role.CLINICAL
             user.save()
 
-            ClinicalStaff.objects.create(
+            clinical = ClinicalStaff.objects.create(
                 user=user,
                 license_number=license_number,
                 specialization=specialization,
                 hire_date=hire_date,
             )
 
+            AuditLog.objects.create(
+                user=request.user,
+                action="CREATE",
+                affected_table=ClinicalStaff.__name__,
+                affected_record_id=clinical.id,
+                description=(
+                    f"Created ClinicalStaff for new User {username} "
+                    f"(User ID: {user.id})"
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+
         messages.success(request, "Clinical staff created successfully.")
         return redirect("admin_dashboard")
     except Exception as e:
+        AuditLog.objects.create(
+            user=request.user,
+            action="FAILED_CREATE",
+            affected_table=ClinicalStaff.__name__,
+            affected_record_id=0,
+            description=(
+                f"Failed to create new ClinicalStaff due to server error "
+            ),
+            ip_address=request.META.get("REMOTE_ADDR")
+        )
+
         messages.error(request, f"Error creating staff: {str(e)}")
         return redirect("admin_dashboard")
 
 @login_required
 @user_passes_test(lambda u: u.role == User.Role.CLINICAL)
-def create_clinical_encounter(request, appointment_id):
+def create_clinical_record(request, appointment_id):
     try:
         appointment = Appointment.objects.select_related(
             "patient", "clinical_staff"
@@ -340,8 +483,20 @@ def create_clinical_encounter(request, appointment_id):
                     treatment_plan=treatment_plan,
                 )
 
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="CREATE",
+                    affected_table=MedicalRecord.__name__,
+                    affected_record_id=record.id,
+                    description=(
+                            f"Created medical record for {record.patient.user.username} "
+                            f"(Appointment ID: {appointment.id})"
+                        ),
+                    ip_address=request.META.get("REMOTE_ADDR")
+                )
+
                 if medication_name:
-                    Prescription.objects.create(
+                    prescription = Prescription.objects.create(
                         medical_record=record,
                         medication_name=medication_name,
                         dosage=dosage,
@@ -351,8 +506,20 @@ def create_clinical_encounter(request, appointment_id):
                         status=Prescription.Status.ACTIVE,
                     )
 
+                    AuditLog.objects.create(
+                        user=request.user,
+                        action="CREATE",
+                        affected_table=Prescription.__name__,
+                        affected_record_id=prescription.id,
+                        description=(
+                            f"Created prescription for {record.patient.user.username} "
+                            f"(Record ID: {record.id})"
+                        ),
+                        ip_address=request.META.get("REMOTE_ADDR")
+                    )
+
                 if test_name:
-                    TestResult.objects.create(
+                    test_result = TestResult.objects.create(
                         medical_record=record,
                         ordered_by=appointment.clinical_staff,
                         test_name=test_name,
@@ -360,8 +527,31 @@ def create_clinical_encounter(request, appointment_id):
                         status=TestResult.Status.PENDING,
                     )
 
+                    AuditLog.objects.create(
+                        user=request.user,
+                        action="CREATE",
+                        affected_table=TestResult.__name__,
+                        affected_record_id=test_result.id,
+                        description=(
+                            f"Created test result for {record.patient.user.username} "
+                            f"(Record ID: {record.id})"
+                        ),
+                        ip_address=request.META.get("REMOTE_ADDR")
+                    )
+
                 appointment.status = Appointment.Status.COMPLETED
                 appointment.save()
+
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="UPDATE",
+                    affected_table=Appointment.__name__,
+                    affected_record_id=appointment.id,
+                    description=(
+                        f"Marked appointment as COMPLETED for {record.patient.user.username} "
+                    ),
+                    ip_address=request.META.get("REMOTE_ADDR")
+                )
 
                 Notification.objects.create(
                     user=appointment.patient.user,
@@ -369,10 +559,22 @@ def create_clinical_encounter(request, appointment_id):
                     type="MEDICAL_RECORD",
                 )
 
-                messages.success(request, "Record saved successfully.")
-                return redirect("clinical_dashboard")
+            messages.success(request, "Record saved successfully.")
+            return redirect("clinical_dashboard")
 
         except Exception as e:
+            AuditLog.objects.create(
+                user=request.user,
+                action="FAILED_CREATE",
+                affected_table=MedicalRecord.__name__,
+                affected_record_id=0,
+                description=(
+                    f"Failed to create new medical record "
+                    f"for {appointment.patient.user.username} due to server error"
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+
             messages.error(request, f"Error creating record: {str(e)}")
 
     return render(request, "create_record.html", {
