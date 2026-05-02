@@ -279,7 +279,6 @@ def appointment_scheduling(request):
     })
 
 @login_required
-@user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
 def medical_records(request):
     user = request.user
 
