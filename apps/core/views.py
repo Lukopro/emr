@@ -281,17 +281,24 @@ def appointment_scheduling(request):
 @login_required
 @user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
 def medical_records(request):
-    try:
-        patient = Patient.objects.get(user=request.user)
-    except Patient.DoesNotExist:
-        return redirect("emr_login")
+    user = request.user
 
-    records = MedicalRecord.objects.filter(
-        patient=patient
-    ).order_by("-date_created")
+    if user.role == User.Role.PATIENT:
+        patient = Patient.objects.get(user=user)
+        records = MedicalRecord.objects.filter(
+            patient=patient
+        ).order_by("-date_created")
+    elif user.role == User.Role.CLINICAL:
+        clinical = ClinicalStaff.objects.get(user=user)
+        records = MedicalRecord.objects.filter(
+            clinical_staff=clinical
+        ).order_by("-date_created")
+    else:
+        redirect("emr_login")
 
     return render(request, 'core/medical_records.html', {
         "records": records,
+        "can_edit": user.role == User.Role.CLINICAL,
     })
 
 @login_required
