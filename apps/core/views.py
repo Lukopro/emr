@@ -5,7 +5,6 @@ from django.contrib.auth.models import get_user_model
 User = get_user_model()
 from datetime import datetime
 from django.contrib import messages
-from django.utils.dateparse import parse_datetime
 from django.db import transaction
 from core.models import *
 

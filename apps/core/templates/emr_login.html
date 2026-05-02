@@ -23,6 +23,7 @@
 
 <div class ="card">
     <form method="POST" action="{% url 'emr_login' %}">
+        {% csrf_token %}
         <div class ="input-group">
             <label>Username</label>
             <div class = "input-wrapper">
