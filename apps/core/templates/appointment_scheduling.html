@@ -41,7 +41,41 @@
             <div class="section-header">
                 <span>Select a Provider</span>
             </div>
-            <p class="placeholder-text">No providers available</p>
+            <div class="section-card">
+                <div class="section-header">
+                    <span>Select a Provider</span>
+                </div>
+
+                <form method="POST" action="{% url 'appointment_scheduling' %}">
+                    <% csrf_token %}
+
+                     <label>Provider</label>
+        <select name="provider_id" required>
+            <option value="">Select provider</option>
+            {% for provider in providers %}
+                <option value="{{ provider.user.id }}">
+                    {{ provider.user.username }} - {{ provider.specialization }}
+                </option>
+            {% empty %}
+                <option disabled>No providers available</option>
+            {% endfor %}
+        </select>
+
+        <label>Date</label>
+        <input type="date" name="date" required>
+
+        <label>Time</label>
+        <input type="time" name="time" required>
+
+        <label>Location</label>
+        <input type="text" name="location">
+
+        <label>Visit Type</label>
+        <input type="text" name="visit_type">
+
+        <button type="submit">Request Appointment</button>
+    </form>
+</div>
         </div>
     </div>
     <div class="right-column">
