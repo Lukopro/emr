@@ -69,10 +69,15 @@ def patient_dashboard(request):
         user=request.user
     ).order_by("-date_sent")
 
+    records = MedicalRecord.objects.filter(
+        patient=patient
+    ).order_by("-date_created")
+
     return render(request, "core/patient_dashboard.html", {
         "patient": patient,
         "appointments": appointments,
-        "notifications": notifications
+        "notifications": notifications,
+        "records": records,
     })
 
 @login_required
@@ -326,10 +331,14 @@ def clinical_dashboard(request):
 def admin_dashboard(request):
     users = User.objects.all()
     logs = AuditLog.objects.order_by("-timestamp")
+    notifications = Notification.objects.filter(
+        user=request.user,
+    ).order_by("-date_sent")
 
     return render(request, 'core/admin_dashboard.html', {
         "users": users,
         "logs": logs,
+        "notifications": notifications
     })
 
 # Action views
