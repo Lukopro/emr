@@ -17,26 +17,31 @@
         <h1 class ="reg-title"> HealthPath</h1>
         <p class="reg-subtitle">Patient Registration</p>
         <div class="reg-card">
+        <form id ="registration-form" method="POST" action="{% url 'patient_registration' %}">
+            {% csrf_token %}
+            {% if error %}
+            <p style="color:red;">{{ error }}</p>
+            {% endif %}
             <div class="reg-section">
                 <h3 class = "section-title">Personal Information</h3>
                 <div class ="input-row">
                     <div class="input-group">
                         <label>First Name</label>
-                        <input type="text" id="reg-firstname" placeholder="First name">
+                        <input type="text" id="reg-firstname" name="first_name" placeholder="First name">
                     </div>
                     <div class="input-group">
                         <label>Last Name</label>
-                        <input type="text" id="reg-lastname" placeholder="Last name">
+                        <input type="text" id="reg-lastname" name= "last_name" placeholder="Last name">
                     </div>
                 </div>
                 <div class="input-row">
                     <div class="input-group">
                         <label>Date of Birth</label>
-                        <input type="date" id="reg-dob">
+                        <input type="date" id="reg-dob" name="dob">
                     </div>
                     <div class="input-group">
                         <label>Gender</label>
-                        <select id="reg-gender" class ="filter-select">
+                        <select id="reg-gender" name="gender" class ="filter-select">
                             <option>Select gender</option>
                             <option>Male</option>
                             <option>Female</option>
@@ -50,16 +55,16 @@
                 <div class="input-row">
                     <div class="input-group">
                         <label>Phone Number</label>
-                        <input type="tel" id="reg-phone" placeholder="Phone number">
+                        <input type="tel" id="reg-phone" name="phone" placeholder="Phone number">
                     </div>
                     <div class="input-group">
                         <label>Email Address</label>
-                        <input type="email" id="reg-email" placeholder="Email address">
+                        <input type="email" id="reg-email" name="email" placeholder="Email address">
                     </div>
                 </div>
                 <div class="input-group">
                     <label>Home Address</label>
-                    <input type="text" id="reg-address" placeholder="Home address">
+                    <input type="text" id="reg-address" name="address" placeholder="Home address">
                 </div>
             </div>
             <div class="reg-section">
@@ -67,16 +72,16 @@
                 <div class="input-row">
                     <div class="input-group">
                         <label>Full Name</label>
-                        <input type="text" id="reg-emergency-name" placeholder="Emergency contact name">
+                        <input type="text" id="reg-emergency-name" name="emergency_name" placeholder="Emergency contact name">
                     </div>
                     <div class="input-group">
                         <label>Relationship</label>
-                        <input type="text" id="reg-emergency-relationship" placeholder="Spouse, Family member...">
+                        <input type="text" id="reg-emergency-relationship" name="emergency_relationship" placeholder="Spouse, Family member...">
                     </div>
             </div>
             <div class="input-group">
                 <label>Emergency Contact Phone</label>
-                <input type="text" id="reg-emergency-phone" placeholder="Emergency contact phone">
+                <input type="text" id="reg-emergency-phone" name="emergency_phone" placeholder="Emergency contact phone">
             </div>
         </div>
         <div class="reg-section">
@@ -84,15 +89,16 @@
             <div class="input-row">
                 <div class="input-group">
                     <label>Insurance Provider</label>
-                    <input type="text" id="reg-insurance-provider" placeholder="Insurance provider">
+                    <input type="text" id="reg-insurance-provider" name="insurance_provider" placeholder="Insurance provider">
                 </div>
                 <div class="input-group">
                     <label>Policy Number</label>
-                    <input type="text" id="reg-policy-number" placeholder="Policy number">
+                    <input type="text" id="reg-policy-number" name="policy_number" placeholder="Policy number">
                 </div>
             </div>
         </div>
         <button class="submit-btn" onclick="openReviewModal()">Continue to Review</button>
+        </form>
         <p class="Login-link">Already have an account? <a href="{% url 'emr_login' %}">Log in</a></p>
     </div>
 </div>
@@ -174,7 +180,7 @@
         <p class="modal-note">Please review information carefully before confirming.</p>
         <div class="modal-actions">
             <button class="cancel-btn" onclick="closeReviewModal()">Go Back</button>
-            <button class="confirm-btn" onclick="submitRegistration()">Confirm & Submit</button>
+            <button type="submit" class="confirm-btn" form="registration-form">Confirm & Submit</button>
         </div>
     </div>
 </div>
