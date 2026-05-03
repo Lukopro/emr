@@ -9,6 +9,7 @@ class User(AbstractUser):
 
     # username, password, email, is_active, date_joined are all provided by AbstractUser
 
+    name = models.CharField(max_length=40, blank=True)
     role = models.CharField(max_length=20, choices=Role.choices)
     phone = models.CharField(max_length=15, blank=True, null=True)
 

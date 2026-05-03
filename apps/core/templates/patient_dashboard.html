@@ -96,7 +96,7 @@
   </div>
   <script>
     function logout(){
-        window.location.href = "{% url 'emr_login' %}";
+        window.location.href = "{% url 'logout' %}";
     }
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
         weekday: 'long',

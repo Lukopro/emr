@@ -85,6 +85,7 @@ def patient_registration(request):
         username = request.POST.get('username')
         password = request.POST.get('password')
         email = request.POST.get('email')
+        name = request.POST.get('name')
         phone = request.POST.get('phone')
 
         date_of_birth = request.POST.get('date_of_birth')
@@ -103,7 +104,7 @@ def patient_registration(request):
         policy_number = request.POST.get('policy_number')
 
         required_fields = [
-            username, password, email, phone,
+            username, password, name, email, phone,
             date_of_birth, gender, street, city, state, zip_code,
         ]
 
@@ -125,6 +126,7 @@ def patient_registration(request):
                     password=password,
                 )
 
+                user.name = name
                 user.phone = phone
                 user.role = User.Role.PATIENT
                 user.save()
@@ -279,7 +281,6 @@ def appointment_scheduling(request):
     })
 
 @login_required
-@user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
 def medical_records(request):
     user = request.user
 
@@ -294,7 +295,7 @@ def medical_records(request):
             clinical_staff=clinical
         ).order_by("-date_created")
     else:
-        redirect("emr_login")
+        return redirect("emr_login")
 
     return render(request, 'core/medical_records.html', {
         "records": records,
@@ -360,6 +361,7 @@ def create_clinical_staff(request):
 
     username = request.POST.get("username")
     password = request.POST.get("password")
+    name = request.POST.get("name")
     email = request.POST.get("email")
     phone = request.POST.get("phone")
 
@@ -372,7 +374,7 @@ def create_clinical_staff(request):
         messages.error(request, "Invalid date")
         return redirect("admin_dashboard")
 
-    required = [username, password, email, phone, license_number, specialization, hire_date]
+    required = [username, password, name, email, phone, license_number, specialization, hire_date]
     if any(not f for f in required):
         messages.error(request, "Missing required information.")
         return redirect("admin_dashboard")
@@ -389,6 +391,7 @@ def create_clinical_staff(request):
                 email=email,
             )
 
+            user.name = name
             user.phone = phone
             user.role = User.Role.CLINICAL
             user.save()
@@ -430,7 +433,7 @@ def create_clinical_staff(request):
         return redirect("admin_dashboard")
 
 @login_required
-@user_passes_test(lambda u: u.role == User.Role.CLINICAL)
+@user_passes_test(lambda u: u.role == User.Role.CLINICAL, login_url='emr_login')
 def create_clinical_record(request, appointment_id):
     try:
         appointment = Appointment.objects.select_related(

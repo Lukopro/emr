@@ -30,7 +30,7 @@
             <div class="section-card">
                 <div class="section-header">
                     <span>Personal Information</span>
-                {% if user.role == 'admin' %}
+                {% if user.role == User.Role.ADMIN %}
                     <button class="edit-btn" id="personal-info-btn" onclick="openModal('edit-personal-modal')">
                         <i class="fa-solid fa-pen"></i> Edit 
                     </button>
@@ -114,7 +114,7 @@
                         <p id="policy-number">{{ patient.policy_number }}</p>
                     </div>
                 </div>
-                {% if user.role == 'admin' %}
+                {% if user.role == User.Role.ADMIN %}
                 <div class="section-card" id="admin-actions">
                     <div class="section-header">
                         <span>Administrator Actions</span>
