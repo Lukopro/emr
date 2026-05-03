@@ -17,15 +17,15 @@
     </div>
     <div class="nav-right">
       <button class = "icon-btn"><i class = "fa-solid fa-bell"></i></button>
-      <div class = "avatar">{{patient.initials}}</div>
+      <div class = "avatar">{{ patient.user.name|slice":2" }}</div>
     </div>
 </div>
 
 <div class="hero">
     <div class="hero-welcome">
-      Welcome, {{patient.name}} !
+      Welcome, {{ patient.user.name }} !
     </div>
-    <div class="hero-sub">{{current_date}}</div>
+    <div class="hero-sub" id="current-date"></div>
   </div>
 
 <div class="quick-actions">
@@ -60,7 +60,8 @@
         </div>
         {% for appt in appointments %}
             <div class = "appointment-item">
-                <p> {{ appt.date }} - {{ appt.reason }}</p>
+                <p> {{ appt.date }} - {{ appt.clinical_staff.user.name }}</p>
+                <small>{{ appt.visit_type }} · {{appt.location }}</small>
             </div>
         {% empty %}
             <p class = "placeholder-text">No upcoming appointments</p>
@@ -71,14 +72,8 @@
             <div class = "section-header">      
             <span> Recent Results </span>
             <a href ="#"> View all</a>
-        </div>
-        {% for result in recent_results %}
-        <div class="appointment-item">
-            <p>{{ result.date }} - {{ result.type }}</p>
-        </div>
-        {% empty %}
+            </div>
         <p class="placeholder-text">No recent results</p>
-        {% endfor %}
     </div>
     </div>
 
@@ -91,7 +86,7 @@
         {% for notification in notifications %}
         <div class="appointment-item">
             <p>{{ notification.message }}</p>
-            <small>{{ notification.timestamp }}</small>
+            <small>{{ notification.date_sent }}</small>
         </div>
     {% empty %}
         <p class="placeholder-text">No notifications</p>
@@ -103,6 +98,12 @@
     function logout(){
         window.location.href = "{% url 'emr_login' %}";
     }
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
   </script>
 </body>
 </html>
