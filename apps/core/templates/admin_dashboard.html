@@ -17,14 +17,14 @@
     </div>
     <div class="nav-right">
       <button class = "icon-btn"><i class = "fa-solid fa-bell"></i></button>
-      <div class = "role-badge" id="user-role">placeholder role</div>
-      <div class ="avatar" id="user-avatar"></div>
+      <div class = "role-badge" id="user-role">{{ user.role }}</div>
+      <div class ="avatar" id="user-avatar">{{ user.initials }}</div>
     </div>
 
 </div>
 <div class="hero">
-    <div class="hero-welcome" id ="greeting">placeholder greeting</div>
-    <div class="hero-sub" id ="current-date">placeholder date</div>
+    <div class="hero-welcome" id ="greeting">Welcome, {{ user.name }}</div>
+    <div class="hero-sub" id ="current-date">{{ current_date }}</div>
         <div class="search-wrapper">
         <i class = "fa-solid fa-magnifying-glass search-icon"></i>
         <input class ="search-bar" type="text" placeholder="Search patients by name or ID...">
@@ -44,7 +44,14 @@
             <span> System activity & audit log </span>
             <a href ="#"> View full log</a>
         </div>
+        {% for log in audit_logs %}
+        <div class="appointment-item">
+            <p>{{ log.action }}</p>
+            <small>{{ log.performed_by }} · {{ log.timestamp }}</small>
+        </div>
+        {% empty %}
         <p class="placeholder-text">No recent activity</p>
+        {% endfor %}
     </div>
     
     </div>
@@ -55,7 +62,14 @@
             <span> Notifications </span>
             <a href ="#"> Mark all read</a>
         </div>
+        {% for notification in notifications %}
+        <div class="appointment-item">
+            <p>{{notification.message }}</p>
+            <small>{{ notification.timestamp }}</small>
+        </div>
+    {% empty %}
         <p class="placeholder-text">No notifications</p>
+    {% endfor %}
     </div>
     </div>
   </div>
@@ -68,39 +82,51 @@
                 <i class="fa-solid fa-x"></i>
             </button>
         </div>
-        <div class="modal-body">
-            <div class="input-row">
-                <div class="input-group">
-                    <label>First Name</label>
-                    <input type="text" id="staff-firstname" placeholder="First name">
-                </div>
-                <div class="input-group">
-                    <label>Last Name</label>
-                    <input type="text" id="staff-lastname" placeholder="Last name">
-                </div>
-            </div>
-            <div class="input-group">
-                <label>Role</label>
-                <select id="staff-role">
-                    <option>Select role</option>
-                    <option>Physician</option>
-                    <option>Nurse</option>
-                    <option>Administrator</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Email Address</label>
-                <input type="email" id="staff-email" placeholder="Email address">
-            </div>
-            <div class="input-group">
-                <label>Phone Number</label>
-                <input type="tel" id="staff-phone" placeholder="Phone number">
-            </div>
+       <form method="POST" action="{% url 'create_clinical_staff' %}">
+    {% csrf_token %}
+
+    <div class="modal-body">
+        <div class="input-group">
+            <label>Username</label>
+            <input type="text" name="username" placeholder="Username" required>
         </div>
-        <div class="modal-actions">
-            <button class="cancel-btn" onclick="closeAddStaffModal()">Cancel</button>
-            <button class="confirm-btn" onclick="submitStaffForm()">Register Staff</button>
+
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" name="password" placeholder="Password" required>
         </div>
+
+        <div class="input-group">
+            <label>Email Address</label>
+            <input type="email" name="email" placeholder="Email address" required>
+        </div>
+
+        <div class="input-group">
+            <label>Phone Number</label>
+            <input type="tel" name="phone" placeholder="Phone number" required>
+        </div>
+
+        <div class="input-group">
+            <label>License Number</label>
+            <input type="text" name="license_number" placeholder="License number" required>
+        </div>
+
+        <div class="input-group">
+            <label>Specialization</label>
+            <input type="text" name="specialization" placeholder="Physician, Nurse, etc." required>
+        </div>
+
+        <div class="input-group">
+            <label>Hire Date</label>
+            <input type="date" name="hire_date" required>
+        </div>
+    </div>
+
+    <div class="modal-actions">
+        <button type="button" class="cancel-btn" onclick="closeAddStaffModal()">Cancel</button>
+        <button type="submit" class="confirm-btn">Register Staff</button>
+    </div>
+</form>
     </div>
     </div>
     <script>
@@ -112,23 +138,9 @@
             document.getElementById('add-staff-modal').style.display = 'none';
         }
 
-        function submitStaffForm() {
-            const firstName = document.getElementById('staff-firstname').value;
-            const lastName = document.getElementById('staff-lastname').value;
-            const role = document.getElementById('staff-role').value;
-            const email = document.getElementById('staff-email').value;
-            const phone = document.getElementById('staff-phone').value;
-
-            if (!firstName || !lastName || role === 'Select role' || !email || !phone) {
-                alert('Please fill in all fields');
-                return;
-            }
-
-            alert('Staff member registered successfully!');
-            closeAddStaffModal();
-        }
+       
     function logout(){
-        window.location.href = "{% url 'emr_login' %}";
+        window.location.href = "{% url 'logout' %}";
     }
     </script>
 </body>

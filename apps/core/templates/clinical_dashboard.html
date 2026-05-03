@@ -19,14 +19,14 @@
     </div>
     <div class="nav-right">
       <button class = "icon-btn"><i class = "fa-solid fa-bell"></i></button>
-      <div class = "role-badge" id="user-role">placeholder role</div>
-      <div class ="avatar" id="user-avatar"></div>
+      <div class = "role-badge" id="user-role">{{ user.role }}</div>
+      <div class ="avatar" id="user-avatar">{{ user.initials }}</div>
     </div>
 
 </div>
 <div class="hero">
-    <div class="hero-welcome" id ="greeting">placeholder greeting</div>
-    <div class="hero-sub" id ="current-date">placeholder date</div>
+    <div class="hero-welcome" id ="greeting">Welcome, {{user.name}} </div>
+    <div class="hero-sub" id ="current-date">{{ current_date }}</div>
         <div class="search-wrapper">
         <i class = "fa-solid fa-magnifying-glass search-icon"></i>
         <input class ="search-bar" type="text" placeholder="Search patients by name or ID...">
@@ -39,7 +39,14 @@
             <span> Todays Schedule </span>
             <a href ="#"> View schedule</a>
         </div>
+        {% for appt in appointments %}
+        <div class="appointment-item">
+            <p>{{ appt.time }} - {{ appt.patient_name }}</p>
+            <small>{{ appt.visit_type }} · {{ appt.location }} </small>
+        </div>
+    {% empty %}
         <p class="placeholder-text">No appointments scheduled</p>
+    {% endfor %}
     </div>
     
         <div class="section-card">
@@ -47,7 +54,14 @@
             <span> Recent Patients </span>
             <a href ="#"> View all</a>
         </div>
-        <p class="placeholder-text">No recent results</p>
+    {% for patient in recent_patients %}
+        <div class="appoint-item">
+            <p>{[ patient.name }}</p>
+            <small>Last seen {{ patient.last_seen }} · {{ patient.visit_type }}</small>
+        </div>
+    {% empty %}
+        <p class="placeholder-text">No recent patients</p>
+    {% endfor %}
     </div>
     </div>
 
@@ -57,13 +71,20 @@
             <span> Notifications </span>
             <a href ="#"> Mark all read</a>
         </div>
+    {% for notification in notifications %}
+        <div class="appointment-item">
+            <p>{{ notification.message }}</p>
+            <small>{{ notification.timestamp }}</small>
+        </div>
+    {% empty %}
         <p class="placeholder-text">No notifications</p>
+    {% endfor %}
     </div>
     </div>
   </div>
   <script>
     function logout(){
-        window.location.href = "{% url 'emr_login' %}";
+        window.location.href = "{% url 'logout' %}";
     }
   </script>
 </body>

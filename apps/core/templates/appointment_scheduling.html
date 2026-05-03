@@ -12,12 +12,12 @@
 <body>
  <div class="navbar">
     <div class="nav-left">
-        <button class="back-btn" onclick = "window.location.href='{% url 'patient_dashboard' %}'"><i class="fa-solid fa-arrow-left"></i></button>
+        <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></button>
         <h1>HealthPath</h1>
     </div>
     <div class="nav-right">
         <button class="icon-btn"><i class="fa-solid fa-bell"></i></button>
-        <div class="avatar" id="user-avatar"></div>
+        <div class="avatar" id="user-avatar">{{ patient.initials }}</div>
     </div>
  </div>
  
@@ -41,7 +41,36 @@
             <div class="section-header">
                 <span>Select a Provider</span>
             </div>
-            <p class="placeholder-text">No providers available</p>
+                <form method="POST" action="{% url 'appointment_scheduling' %}">
+                    {% csrf_token %}
+
+                     <label>Provider</label>
+        <select name="provider_id" required>
+            <option value="">Select provider</option>
+            {% for provider in providers %}
+                <option value="{{ provider.user.id }}">
+                    {{ provider.user.username }} - {{ provider.specialization }}
+                </option>
+            {% empty %}
+                <option disabled>No providers available</option>
+            {% endfor %}
+        </select>
+
+        <label>Date</label>
+        <input type="date" name="date" required>
+
+        <label>Time</label>
+        <input type="time" name="time" required>
+
+        <label>Location</label>
+        <input type="text" name="location">
+
+        <label>Visit Type</label>
+        <input type="text" name="visit_type">
+
+        <button type="submit">Request Appointment</button>
+    </form>
+</div>
         </div>
     </div>
     <div class="right-column">
@@ -128,7 +157,7 @@
         <p class="modal-note">A confirmation will be sent to your email and phone number.</p>
         <div class="modal-actions">
             <button class="cancel-btn" onclick="closeModal()">Cancel</button>
-             <button class="confirm-btn">Confirm Appointment</button>
+             <button type="submit" class="confirm-btn">Confirm Appointment</button>
         </div>
     </div>
  </div>
@@ -150,6 +179,9 @@
     }
     function closeModal(){
         document.getElementById('confirmation-modal').style.display = 'none';
+    }
+    function goBack() {
+        window.location.href = "{% url 'patient_dashboard'}";
     }
  </script>
 </body>
