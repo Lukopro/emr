@@ -18,12 +18,12 @@
     </div>
     <div class="nav-right">
       <button class = "icon-btn"><i class = "fa-solid fa-bell"></i></button>
-      <div class ="avatar" id="user-avatar">{{ patient.initials }} </div>
+      <div class ="avatar" id="user-avatar">{{ request.user.name|slice:":2" }} </div>
     </div>
 </div>
 <div class="hero">
     <h2 class="page-title"> Medical records</h2>
-    <p class="patient-name" id ="patient-name">{{ patient.name }}</p>
+    <p class="patient-name" id ="patient-name">{{ request.user.name }}</p>
     <div class="hero-filters">
         <div class="search-wrapper">
         <i class = "fa-solid fa-magnifying-glass search-icon"></i>
@@ -46,7 +46,7 @@
 <div class ="section-card records-card">
     <div class="section-header">
         <span id="records-title">Records</span>
-        {% if user.role == 'clinical' %}
+        {% if can_edit %}
         <button class="edit-btn" onclick="openRecordModal()">
             <i class="fa-solid fa-pen"></i> Edit Record
         </button>
@@ -54,8 +54,8 @@
     </div>
     {% for record in records %}
         <div class="appointment-item">
-            <p>{{ record.date }} - {{ record.title }}</p>
-            <small>{{ record.provider }}</small>
+            <p>{{ record.date_created }} - {{ record.visit_summary }}</p>
+            <small>{{ record.clinical_staff.user.name }}</small>
         </div>
     {% empty %}
     <p class="placeholder-text" id="records-placeholder">No records found</p>
@@ -72,6 +72,10 @@
         <div class="modal-body">
         <form method="POST" action="{% url 'update_record' %}">
             {% csrf_token %}
+            <div class="input-group">
+                <label>Visit Summary</label>
+                <textarea name="visit_summary" placeholder="Enter visit summary.." rows="3"></textarea>
+            </div>
             <div class="input-group">
                 <label>Clinical Notes</label>
                 <textarea name="clinical_notes" id="edit-clinical-notes" placeholder="Enter clinical notes..." rows="6"></textarea>
