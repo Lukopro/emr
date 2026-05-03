@@ -293,7 +293,7 @@ def medical_records(request):
             clinical_staff=clinical
         ).order_by("-date_created")
     else:
-        redirect("emr_login")
+        return redirect("emr_login")
 
     return render(request, 'core/medical_records.html', {
         "records": records,
@@ -429,7 +429,7 @@ def create_clinical_staff(request):
         return redirect("admin_dashboard")
 
 @login_required
-@user_passes_test(lambda u: u.role == User.Role.CLINICAL)
+@user_passes_test(lambda u: u.role == User.Role.CLINICAL, login_url='emr_login')
 def create_clinical_record(request, appointment_id):
     try:
         appointment = Appointment.objects.select_related(
