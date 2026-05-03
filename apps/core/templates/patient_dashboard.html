@@ -58,7 +58,13 @@
             <span> Upcoming appointments </span>
             <a href ="#"> View all</a>
         </div>
-        <p class="placeholder-text">No upcoming appointments</p>
+        {% for appt in appointments %}
+            <div class = "appointment-item">
+                <p> {{ appt.date }} - {{ appt.reason }}</p>
+            </div>
+        {% empty %}
+            <p class = "placeholder-text">No upcoming appointments</p>
+        {% endfor %}
     </div>
     
         <div class="section-card">
@@ -66,7 +72,13 @@
             <span> Recent Results </span>
             <a href ="#"> View all</a>
         </div>
+        {% for result in recent_results %}
+        <div class="appointment-item">
+            <p>{{ result.date }} - {{ result.type }}</p>
+        </div>
+        {% empty %}
         <p class="placeholder-text">No recent results</p>
+        {% endfor %}
     </div>
     </div>
 
@@ -76,7 +88,14 @@
             <span> Notifications </span>
             <a href ="#"> Mark all read</a>
         </div>
+        {% for notification in notifications %}
+        <div class="appointment-item">
+            <p>{{ notification.message }}</p>
+            <small>{{ notification.timestamp }}</small>
+        </div>
+    {% empty %}
         <p class="placeholder-text">No notifications</p>
+    {% endfor %}
     </div>
     </div>
   </div>

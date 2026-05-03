@@ -12,7 +12,7 @@
 <body>
     <div class="navbar">
         <div class="nav-left">
-            <button class="back-btn" onclick="window.location.href='{% url 'patient_dashboard' %}'"><i class="fa-solid fa-arrow-left"></i></button>
+            <button class="back-btn" onclick="goBack()"><i class="fa-solid fa-arrow-left"></i></button>
             <h1>HealthPath</h1>
         </div>
         <div class="nav-right">
@@ -299,6 +299,10 @@
     function savePersonalInfo() {
         //need top implement API call to update personal info
         closeModal('edit-personal-modal');
+    }
+
+    function goBack() {
+        window.location.href = "{% url 'patient_dashboard' %}";
     }
 </script>
 </body>
