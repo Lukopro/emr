@@ -17,11 +17,11 @@
         </div>
         <div class="nav-right">
             <button class = "icon-btn"><i class="fa-solid fa-bell"></i></button>
-        <div class="avatar" id="user-avatar"></div>
+        <div class="avatar" id="user-avatar">{{ patient.initials }}</div>
     </div>
     </div>
     <div class="hero">
-        <div class="hero-welcome" id="patient-name"> Patient Name</div>
+        <div class="hero-welcome" id="patient-name">{{ patient.name }}</div>
         <div class="hero-sub">Patient Profile</div>
     </div>
 
@@ -30,23 +30,30 @@
             <div class="section-card">
                 <div class="section-header">
                     <span>Personal Information</span>
+                {% if user.role == 'admin' %}
                     <button class="edit-btn" id="personal-info-btn" onclick="openModal('edit-personal-modal')">
-                        <i class="fa-solid fa-lock"></i> Locked</button>
+                        <i class="fa-solid fa-pen"></i> Edit 
+                    </button>
+                {% else %}
+                    <button class="edit-btn" id="personal-info-btn">
+                        <i class="fa-solid fa-lock"></i> Locked
+                    </button>
+                {% endif %}
                 </div>
                 <div class="info-row">
                     <div class="info-item">
                         <label>Full name</label>
-                        <p id="full-name"> placeholder</p>
+                        <p id="full-name"> {{patient.full_name }}</p>
                     </div>
                     <div class="info-item">
                         <label>Date of Birth</label>
-                        <p id="dob">placeholder</p>
+                        <p id="dob">{{ patient.dob }}</p>
                     </div>
                 </div>
                 <div class="info-row">
                     <div class="info-item">
                         <label>Gender</label>
-                        <p id="gender">placeholder</p>
+                        <p id="gender">{{ patient.gender }}</p>
                     </div>
                 </div>
             </div>
@@ -59,16 +66,16 @@
                 <div class="info-row">
                     <div class="info-item">
                         <label>Phone Number</label>
-                        <p id="phone">placeholder</p>
+                        <p id="phone">{{ patient.phone }}</p>
                     </div>
                     <div class="info-item">
                     <label>Email Address</label>
-                    <p id="email">placeholder</p>
+                    <p id="email">{{ patient.email }}</p>
                     </div>
                 </div>
                     <div class="info-item">
                         <label>Home Address</label>
-                        <p id="address">placeholder</p>
+                        <p id="address">{{ patient.address }}</p>
                     </div>
                 </div>
             </div>
@@ -81,15 +88,15 @@
                     </div>
                     <div class="info-item">
                         <label>Full Name</label>
-                        <p id="emergency-name">placeholder</p>
+                        <p id="emergency-name">{{ patient.emergency_name }}</p>
                     </div>
                     <div class="info-item">
                         <label>Relationship</label>
-                        <p id="emergency-relationship">placeholder</p>
+                        <p id="emergency-relationship">{{ patient.emergency_relationship }}</p>
                     </div>
                     <div class="info-item">
                         <label>Phone number</label>
-                        <p id="emergency-phone">placeholder</p>
+                        <p id="emergency-phone">{{ patient.emergency_phone }}</p>
                     </div>
                 </div>
                 <div class="section-card">
@@ -100,14 +107,15 @@
                     </div>
                     <div class="info-item">
                         <label>Insurance Provider</label>
-                        <p id="insurance-provider">placeholder</p>
+                        <p id="insurance-provider">{{ patient.insurance_provider }}</p>
                     </div>
                     <div class="info-item">
                         <label>Policy Number</label>
-                        <p id="policy-number">placeholder</p>
+                        <p id="policy-number">{{ patient.policy_number }}</p>
                     </div>
                 </div>
-                <div class="section-card" id="admin-actions" style="display: none;">
+                {% if user.role == 'admin' %}
+                <div class="section-card" id="admin-actions">
                     <div class="section-header">
                         <span>Administrator Actions</span>
                     </div>
@@ -120,9 +128,10 @@
                         </button>
                     </div>
                 </div>
+                {% endif %}
             </div>
         </div>
-        <div class="modal-overlay" id="edit-contact-modal" style="display: none;">
+    <div class="modal-overlay" id="edit-contact-modal" style="display: none;">
     <div class="modal">
         <div class="modal-header">
             <h2>Edit Contact Information</h2>
@@ -131,25 +140,28 @@
             </button>
         </div>
         <div class="modal-body">
+            <form method="POST" action="{% url 'update_contact' patient.id %}">
+                {% csrf_token %}
             <div class="input-row">
                 <div class="input-group">
                     <label>Phone Number</label>
-                    <input type="tel" id="edit-phone" placeholder="Phone number">
+                    <input type="tel" id="edit-phone" name="phone" value="{{ patient.phone }}" placeholder="Phone number">
                 </div>
                 <div class="input-group">
                     <label>Email Address</label>
-                    <input type="email" id="edit-email" placeholder="Email address">
+                    <input type="email" id="edit-email" name="email" value="{{ patient.email }}" placeholder="Email address">
                 </div>
             </div>
             <div class="input-group">
                 <label>Home Address</label>
-                <input type="text" id="edit-address" placeholder="Home address">
+                <input type="text" id="edit-address" name="address" value="{{ patient.address }}" placeholder="Home address">
             </div>
         </div>
         <div class="modal-actions">
             <button class="cancel-btn" onclick="closeModal('edit-contact-modal')">Cancel</button>
-            <button class="confirm-btn" onclick="saveContact()">Save Changes</button>
+            <button type="submit" class="confirm-btn">Save Changes</button>
         </div>
+    </form>
     </div>
 </div>
 
@@ -162,25 +174,28 @@
             </button>
         </div>
         <div class="modal-body">
+            <form method="POST" action="{% url 'update_emergency' patient.id %}">
+                {% csrf_token %}
             <div class="input-row">
                 <div class="input-group">
                     <label>Full Name</label>
-                    <input type="text" id="edit-emergency-name" placeholder="Full name">
+                    <input type="text" id="edit-emergency-name" name="emergency_name" value="{{ patient.emergency_name }}" placeholder="Full name">
                 </div>
                 <div class ="input-group">
                     <label>Relationship</label>
-                    <input type="text" id="edit-emergency-relationship" placeholder="e.g. Spouse, Parent">
+                    <input type="text" id="edit-emergency-relationship" name="emergency_relationship" value ="{{ patient.emergency_relationship }}" placeholder="e.g. Spouse, Parent">
                 </div>
             </div>
             <div class="input-group">
                 <label>Phone Number</label>
-                <input type="tel" id="edit-emergency-phone" placeholder="Phone number">
+                <input type="tel" id="edit-emergency-phone" name="emergency_phone" value="{{ patient.emergency_phone }}" placeholder="Phone number">
             </div>
         </div>
         <div class="modal-actions">
             <button class="cancel-btn" onclick="closeModal('edit-emergency-modal')">Cancel</button>
-            <button class="confirm-btn" onclick="saveEmergency()">Save Changes</button>
+            <button type="submit" class="confirm-btn">Save Changes</button>
         </div>
+    </form>
     </div>
 </div>
 
@@ -193,21 +208,24 @@
             </button>
         </div>
         <div class="modal-body">
+            <form method="POST" action="{% url 'update_insurance' patient.id %}">
+                {% csrf_token %}
             <div class="input-row">
                 <div class="input-group">
                     <label>Insurance Provider</label>
-                    <input type="text" id="edit-insurance-provider" placeholder="Insurance provider">
+                    <input type="text" id="edit-insurance-provider" name="insurance_provider" value="{{ patient.insurance_provider }}" placeholder="Insurance provider">
                 </div>
                 <div class ="input-group">
                     <label>Policy Number</label>
-                    <input type="text" id="edit-policy-number" placeholder="Policy number">
+                    <input type="text" id="edit-policy-number" name="policy_number" value="{{ patient.policy_number }}" placeholder="Policy number">
                 </div>
             </div>
         </div>
         <div class="modal-actions">
             <button class="cancel-btn" onclick="closeModal('edit-insurance-modal')">Cancel</button>
-            <button class="confirm-btn" onclick="saveInsurance()">Save Changes</button>
+            <button type="submit" class="confirm-btn">Save Changes</button>
         </div>
+    </form>
     </div>
 </div>
 <div class="modal-overlay" id="edit-personal-modal" style="display: none;">
@@ -219,19 +237,21 @@
             </button>
         </div>
         <div class="modal-body">
+            <form method="POST" action="{% url 'update_personal' patient.id %}">
+                {% csrf_token %}
             <div class="input-row">
                 <div class="input-group">
                 <label>Full Name</label>
-                <input type="text" id="edit-full-name" placeholder="Full name">
+                <input type="text" id="edit-full-name" name="full_name" value="{{ patient.full_name }}" placeholder="Full name">
                 </div>
                 <div class="input-group">
                     <label>Date of Birth</label>
-                    <input type="date" id="edit-dob">
+                    <input type="date" name="dob" id="edit_dob" value="{{ patient.dob }}">
                 </div>
             </div>
             <div class="input-group">
                 <label>Gender</label>
-                <select id="edit-gender">
+                <select name="gender" id="edit-gender">
                     <option>Male</option>
                     <option>Female</option>
                     <option>Prefer not to say</option>
@@ -240,8 +260,9 @@
         </div>
         <div class="modal-actions">
             <button class="cancel-btn" onclick="closeModal('edit-personal-modal')">Cancel</button>
-            <button class="confirm-btn" onclick="savePersonalInfo()">Save Changes</button>
+            <button type="submit" class="confirm-btn">Save Changes</button>
         </div>
+    </form>
     </div>
 </div>
 <script>
@@ -259,20 +280,6 @@
     }
     function saveInsurance() {
         closeModal('edit-insurance-modal');
-    }
-
-    window.onload = function() {
-        const params = new URLSearchParams(window.location.search);
-        const role = params.get('role');
-
-        if (role === 'admin') {
-            document.getElementById('admin-actions').style.display = 'block';
-
-            document.getElementById('personal-info-btn').innerHTML = '<i class="fa-solid fa-pen"></i> Edit';
-            document.getElementById('personal-info-btn').onclick = function() {
-                openModal('edit-personal-modal');
-            };
-        }
     }
 
     function resetCredentials() {
