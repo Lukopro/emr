@@ -17,14 +17,14 @@
     </div>
     <div class="nav-right">
       <button class = "icon-btn"><i class = "fa-solid fa-bell"></i></button>
-      <div class = "role-badge" id="user-role">placeholder role</div>
-      <div class ="avatar" id="user-avatar"></div>
+      <div class = "role-badge" id="user-role">{{ user.role }}</div>
+      <div class ="avatar" id="user-avatar">{{ user.initials }}</div>
     </div>
 
 </div>
 <div class="hero">
-    <div class="hero-welcome" id ="greeting">placeholder greeting</div>
-    <div class="hero-sub" id ="current-date">placeholder date</div>
+    <div class="hero-welcome" id ="greeting">Welcome, {{ user.name }}</div>
+    <div class="hero-sub" id ="current-date">{{ current_date }}</div>
         <div class="search-wrapper">
         <i class = "fa-solid fa-magnifying-glass search-icon"></i>
         <input class ="search-bar" type="text" placeholder="Search patients by name or ID...">
@@ -44,7 +44,14 @@
             <span> System activity & audit log </span>
             <a href ="#"> View full log</a>
         </div>
+        {% for log in audit_logs %}
+        <div class="appointment-item">
+            <p>{{ log.action }}</p>
+            <small>{{ log.performed_by }} · {{ log.timestamp }}</small>
+        </div>
+        {% empty %}
         <p class="placeholder-text">No recent activity</p>
+        {% endfor %}
     </div>
     
     </div>
@@ -55,7 +62,14 @@
             <span> Notifications </span>
             <a href ="#"> Mark all read</a>
         </div>
+        {% for notification in notifications %}
+        <div class="appointment-item">
+            <p>{{notification.message }}</p>
+            <small>{{ notification.timestamp }}</small>
+        </div>
+    {% empty %}
         <p class="placeholder-text">No notifications</p>
+    {% endfor %}
     </div>
     </div>
   </div>
