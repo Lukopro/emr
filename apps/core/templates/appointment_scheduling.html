@@ -17,7 +17,7 @@
     </div>
     <div class="nav-right">
         <button class="icon-btn"><i class="fa-solid fa-bell"></i></button>
-        <div class="avatar" id="user-avatar">{{ patient.initials }}</div>
+        <div class="avatar" id="user-avatar">{{ patient.user.name|slice:":2" }}</div>
     </div>
  </div>
  
@@ -49,7 +49,7 @@
             <option value="">Select provider</option>
             {% for provider in providers %}
                 <option value="{{ provider.user.id }}">
-                    {{ provider.user.username }} - {{ provider.specialization }}
+                    {{ provider.user.name }} - {{ provider.specialization }}
                 </option>
             {% empty %}
                 <option disabled>No providers available</option>
@@ -181,7 +181,7 @@
         document.getElementById('confirmation-modal').style.display = 'none';
     }
     function goBack() {
-        window.location.href = "{% url 'patient_dashboard'}";
+        window.location.href = "{% url 'patient_dashboard' %}";
     }
  </script>
 </body>
