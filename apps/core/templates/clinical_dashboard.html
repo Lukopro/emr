@@ -68,7 +68,7 @@
     {% for notification in notifications %}
         <div class="appointment-item">
             <p>{{ notification.message }}</p>
-            <small>{{ notification.timestamp }}</small>
+            <small>{{ notification.date_sent }}</small>
         </div>
     {% empty %}
         <p class="placeholder-text">No notifications</p>

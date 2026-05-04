@@ -282,6 +282,7 @@ def appointment_scheduling(request):
             messages.error(request, "This time slot is already booked, please use another time.")
 
     return render(request, 'core/appointment_scheduling.html', {
+        "patient": patient,
         "providers": providers,
     })
 
