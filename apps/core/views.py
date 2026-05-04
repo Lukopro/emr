@@ -488,7 +488,7 @@ def create_clinical_staff(request):
 
 @login_required
 @user_passes_test(lambda u: u.role == User.Role.CLINICAL, login_url='emr_login')
-def create_clinical_record(request, appointment_id):
+def create_record(request, appointment_id):
     try:
         appointment = Appointment.objects.select_related(
             "patient", "clinical_staff"
