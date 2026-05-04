@@ -47,7 +47,14 @@
         {% for log in logs %}
         <div class="appointment-item">
             <p>{{ log.action }}</p>
-            <small>{{ log.user.name if log.user else "System" }} · {{ log.timestamp }}</small>
+            <small>
+                {% if log.user %}
+                    {{ log.user.name }}
+                {% else %}
+                    System
+                {% endif %}
+                · {{ log.timestamp }}
+            </small>
         </div>
         {% empty %}
         <p class="placeholder-text">No recent activity</p>
