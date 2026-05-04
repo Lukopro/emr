@@ -310,6 +310,50 @@ def medical_records(request):
 
 @login_required
 @user_passes_test(lambda u: u.role == User.Role.CLINICAL, login_url='emr_login')
+def update_record(request):
+    if request.method == "POST":
+        record_id = request.POST.get("record_id")
+        if not record_id:
+            messages.error(request, "Invalid record ID.")
+            return redirect("medical_records")
+        record = get_object_or_404(
+            MedicalRecord,
+            id=record_id,
+            clinical_staff__user=request.user
+        )
+
+        with transaction.atomic():
+            record.visit_summary = request.POST.get("visit_summary")
+            record.clinical_notes = request.POST.get("clinical_notes")
+            record.diagnosis = request.POST.get("diagnosis")
+            record.treatment_plan = request.POST.get("treatment_plan")
+
+            record.save()
+
+            Notification.objects.create(
+                user=record.patient.user,
+                message=f"Your clinical record has been updated by {request.user.username}.",
+                type="MEDICAL_RECORD",
+            )
+
+            AuditLog.objects.create(
+                user=request.user,
+                action="UPDATE",
+                affected_table=MedicalRecord.__name__,
+                affected_record_id=record_id,
+                description=(
+                    f"Updated medical record belonging to {record.patient.user.username} "
+                    f"(User ID: {request.patient.user.id})"
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+
+        messages.success(request, "Record updated successfully")
+
+    return redirect("medical_records")
+
+@login_required
+@user_passes_test(lambda u: u.role == User.Role.CLINICAL, login_url='emr_login')
 def clinical_dashboard(request):
     staff = ClinicalStaff.objects.get(user=request.user)
 

@@ -13,7 +13,8 @@ urlpatterns = [
     path('patient_registration/', views.patient_registration, name='patient_registration'),
 
     #update URLs change/edit as you like
-    path('patient_profile/<int:patient_id>/update_contact/', views.update_contact, name='update_contact')
+    path('patient_profile/<int:patient_id>/update_contact/', views.update_contact, name='update_contact'),
+    path('medical_records/update_record/', views.patient_registration, name='update_record'),
 
     path('logout/', views.logout_view, name='logout'),
 ]
