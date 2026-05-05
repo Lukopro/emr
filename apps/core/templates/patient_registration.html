@@ -26,12 +26,12 @@
                 <h3 class = "section-title">Personal Information</h3>
                 <div class ="input-row">
                     <div class="input-group">
-                        <label>First Name</label>
-                        <input type="text" id="reg-firstname" name="first_name" placeholder="First name">
+                        <label>Username</label>
+                        <input type="text" id="reg-username" name="username" placeholder="Username">
                     </div>
                     <div class="input-group">
-                        <label>Last Name</label>
-                        <input type="text" id="reg-lastname" name= "last_name" placeholder="Last name">
+                        <label>Full Name</label>
+                        <input type="text" id="reg-name" name= "name" placeholder="Full name">
                     </div>
                 </div>
                 <div class="input-row">
@@ -42,10 +42,10 @@
                     <div class="input-group">
                         <label>Gender</label>
                         <select id="reg-gender" name="gender" class ="filter-select">
-                            <option>Select gender</option>
-                            <option>Male</option>
-                            <option>Female</option>
-                            <option>Prefer not to say</option>
+                            <option value="" disabled selected>Select gender</option>
+                            <option value="M">Male</option>
+                            <option value="F">Female</option>
+                            <option value="X">Prefer not to say</option>
                         </select>
                     </div>
                 </div>
@@ -114,12 +114,12 @@
             <h3 class ="review-section-title">Personal Information</h3>
             <div class="review-row">
                 <div class="review-item">
-                    <label>First Name</label>
-                    <p id="review-firstname"></p>
+                    <label>Username</label>
+                    <p id="review-username"></p>
                 </div>
                 <div class="review-item">
-                    <label>Last Name</label>
-                    <p id="review-lastname"></p>
+                    <label>Full Name</label>
+                    <p id="review-name"></p>
                 </div>
             </div>
             <div class="review-row">
@@ -186,8 +186,8 @@
 </div>
 <script>
     function openReviewModal(){
-        document.getElementById('review-firstname').textContent = document.getElementById('reg-firstname').value;
-        document.getElementById('review-lastname').textContent = document.getElementById('reg-lastname').value;
+        document.getElementById('review-username').textContent = document.getElementById('reg-username').value;
+        document.getElementById('review-name').textContent = document.getElementById('reg-name').value;
         document.getElementById('review-dob').textContent = document.getElementById('reg-dob').value;
         document.getElementById('review-gender').textContent = document.getElementById('reg-gender').value;
         document.getElementById('review-phone').textContent = document.getElementById('reg-phone').value;

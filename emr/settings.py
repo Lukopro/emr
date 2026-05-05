@@ -76,10 +76,10 @@ WSGI_APPLICATION = 'emr.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'emr_db',
-        'USER': 'emr_user',
-        'PASSWORD': 'strongpassword',
-        'HOST': 'localhost',
+        'NAME': 'emr',
+        'USER': 'root',
+        'PASSWORD': '141421',
+        'HOST': '127.0.0.1',
         'PORT': '3306',
     }
 }
@@ -111,7 +111,7 @@ AUTH_USER_MODEL = "core.User"
 
 SESSION_COOKIE_SECURE = True
 CSRF_COOKIE_SECURE = True
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 # Internationalization
 # https://docs.djangoproject.com/en/6.0/topics/i18n/
@@ -129,7 +129,3 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = '/static/'
-
-STATICFILES_DIRS = [
-    BASE_DIR / 'static',
-]

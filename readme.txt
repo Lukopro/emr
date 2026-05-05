@@ -1,8 +1,5 @@
 // Database creation and testing user
 CREATE DATABASE emr_db;
-CREATE USER 'emr_user'@'localhost' IDENTIFIED BY 'strongpassword';
-GRANT ALL PRIVILEGES ON emr_db.* TO 'emr_user'@'localhost';
-FLUSH PRIVILEGES;
 
 // For settings.py
 import os
@@ -24,3 +21,9 @@ Still need:
 - Finish notifications and audit logging
 - Patient profile editing?
 - Test result + prescription lifecycle?
+
+User.objects.create_user(username="admin", password="123", role=User.Role.ADMIN, name="System Admin", email="admin@emr.com")
+
+admin_user.is_staff = True
+admin_user.is_superuser = False
+admin_user.save()

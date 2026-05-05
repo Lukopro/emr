@@ -1,13 +1,14 @@
-from django.contrib.auth import authenticate, login, logout
+import traceback
+from django.contrib.auth import authenticate, login, logout, get_user_model
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required, user_passes_test
-from django.contrib.auth.models import get_user_model
-User = get_user_model()
 from datetime import datetime
 from django.contrib import messages
 from django.db import transaction
-from core.models import *
+from apps.core.models import *
 from django.db import IntegrityError
+
+User = get_user_model()
 
 # Page views
 
@@ -50,11 +51,11 @@ def emr_login(request):
             ip_address=request.META.get("REMOTE_ADDR")
         )
 
-        return render(request, 'core/emr_login.html', {
+        return render(request, 'emr_login.html', {
             "error": "Invalid credentials"
         })
 
-    return render(request, 'core/emr_login.html')
+    return render(request, 'emr_login.html')
 
 @login_required
 @user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
@@ -73,7 +74,7 @@ def patient_dashboard(request):
         patient=patient
     ).order_by("-date_created")
 
-    return render(request, "core/patient_dashboard.html", {
+    return render(request, "patient_dashboard.html", {
         "patient": patient,
         "appointments": appointments,
         "notifications": notifications,
@@ -83,7 +84,7 @@ def patient_dashboard(request):
 @login_required
 @user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
 def patient_profile(request):
-    return render(request, 'core/patient_profile.html')
+    return render(request, 'patient_profile.html')
 
 def patient_registration(request):
     if request.method == "POST":
@@ -93,7 +94,7 @@ def patient_registration(request):
         name = request.POST.get('name')
         phone = request.POST.get('phone')
 
-        date_of_birth = request.POST.get('date_of_birth')
+        date_of_birth = request.POST.get('dob')
         try:
             date_of_birth = datetime.strptime(date_of_birth, "%Y-%m-%d").date()
         except ValueError:
@@ -101,25 +102,23 @@ def patient_registration(request):
             return redirect("patient_registration")
 
         gender = request.POST.get('gender')
-        street = request.POST.get('street')
-        city = request.POST.get('city')
-        state = request.POST.get('state')
-        zip_code = request.POST.get('zip_code')
+        address = request.POST.get('address')
         insurance_provider = request.POST.get('insurance_provider')
         policy_number = request.POST.get('policy_number')
 
         required_fields = [
             username, password, name, email, phone,
-            date_of_birth, gender, street, city, state, zip_code,
+            date_of_birth, gender, address,
+            insurance_provider, policy_number
         ]
 
         if any(not f for f in required_fields):
-            return render(request, 'core/patient_registration.html', {
+            return render(request, 'patient_registration.html', {
                 "error": "Missing information"
             })
 
         if User.objects.filter(username=username).exists():
-            return render(request, 'core/patient_registration.html', {
+            return render(request, 'patient_registration.html', {
                 "error": "Username already in use"
             })
 
@@ -140,10 +139,7 @@ def patient_registration(request):
                     user=user,
                     date_of_birth=date_of_birth,
                     gender=gender,
-                    street=street,
-                    city=city,
-                    state=state,
-                    zip_code=zip_code,
+                    address=address,
                     insurance_provider=insurance_provider,
                     policy_number=policy_number,
                 )
@@ -172,13 +168,15 @@ def patient_registration(request):
                 ip_address=request.META.get("REMOTE_ADDR")
             )
 
-            return render(request, 'core/patient_registration.html', {
+            print(traceback.format_exc())
+
+            return render(request, 'patient_registration.html', {
                 "error": f"Registration failed: {e}"
             })
 
         return redirect("emr_login")
 
-    return render(request, 'core/patient_registration.html')
+    return render(request, 'patient_registration.html')
 
 @login_required
 @user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
@@ -281,7 +279,7 @@ def appointment_scheduling(request):
 
             messages.error(request, "This time slot is already booked, please use another time.")
 
-    return render(request, 'core/appointment_scheduling.html', {
+    return render(request, 'appointment_scheduling.html', {
         "patient": patient,
         "providers": providers,
     })
@@ -303,7 +301,7 @@ def medical_records(request):
     else:
         return redirect("emr_login")
 
-    return render(request, 'core/medical_records.html', {
+    return render(request, 'medical_records.html', {
         "records": records,
         "can_edit": user.role == User.Role.CLINICAL,
     })
@@ -366,7 +364,7 @@ def clinical_dashboard(request):
         user=request.user
     )
 
-    return render(request, 'core/clinical_dashboard.html', {
+    return render(request, 'clinical_dashboard.html', {
         "appointments": appointments,
         "notifications": notifications
     })
@@ -380,7 +378,7 @@ def admin_dashboard(request):
         user=request.user,
     ).order_by("-date_sent")
 
-    return render(request, 'core/admin_dashboard.html', {
+    return render(request, 'admin_dashboard.html', {
         "users": users,
         "logs": logs,
         "notifications": notifications
@@ -461,7 +459,7 @@ def create_clinical_staff(request):
                 user=request.user,
                 action="CREATE",
                 affected_table=ClinicalStaff.__name__,
-                affected_record_id=clinical.id,
+                affected_record_id=clinical.user_id,
                 description=(
                     f"Created ClinicalStaff for new User {username} "
                     f"(User ID: {user.id})"
@@ -482,6 +480,8 @@ def create_clinical_staff(request):
             ),
             ip_address=request.META.get("REMOTE_ADDR")
         )
+
+        print(traceback.format_exc())
 
         messages.error(request, f"Error creating staff: {str(e)}")
         return redirect("admin_dashboard")
@@ -638,6 +638,8 @@ def create_record(request, appointment_id):
                 ),
                 ip_address=request.META.get("REMOTE_ADDR")
             )
+
+            print(traceback.format_exc())
 
             messages.error(request, f"Error creating record: {str(e)}")
 

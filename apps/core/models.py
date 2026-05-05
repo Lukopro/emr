@@ -21,10 +21,7 @@ class Patient(models.Model):
     date_of_birth = models.DateField()
     gender = models.CharField(max_length=1)
 
-    street = models.CharField(max_length=100)
-    city = models.CharField(max_length=50)
-    state = models.CharField(max_length=2)
-    zip_code = models.CharField(max_length=10)
+    address = models.TextField()
 
     insurance_provider = models.CharField(max_length=50, blank=True)
     policy_number = models.CharField(max_length=50, blank=True)
