@@ -1,5 +1,6 @@
 from django.db import models
-
+from django.contrib.auth.models import AbstractUser
+from django.db.models import Q, UniqueConstraint
 
 class User(AbstractUser):
     class Role(models.TextChoices):
