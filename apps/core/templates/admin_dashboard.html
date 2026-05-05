@@ -69,8 +69,14 @@
             <span> Notifications </span>
             <a href ="#"> Mark all read</a>
         </div>
-        <!--placeholder for notifications -->
+        {% for notification in notifications %}
+        <div class="appointment-item">
+            <p>{{ notification.message }}</p>
+            <small>{{ notification.date_sent }}</small>
+        </div>
+        {% empty %}
         <p class="placeholder-text">No notifications</p>
+        {% endfor %}
     </div>
     </div>
   </div>
@@ -90,6 +96,11 @@
         <div class="input-group">
             <label>Username</label>
             <input type="text" name="username" placeholder="Username" required>
+        </div>
+
+        <div class="input-group">
+            <label>Full Name</label>
+            <input type="text" name="name" placeholder="Full name" required>
         </div>
 
         <div class="input-group">
