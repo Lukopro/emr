@@ -25,7 +25,15 @@
     <div class="hero-welcome">Schedule Appointment</div>
     <div class="hero-sub">Select a provider or a date to get started</div>
  </div>
-
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <p class="error-message">{{ message }}</p>
+        {% else %}
+            <p class="success-message">{{ message }}</p>
+        {% endif %}
+    {% endfor %}
+{% endif %}
  <div class="toggle-row">
     <button class="toggle-btn active-toggle" onclick="switchView('provider')">
         <i class="fa-solid fa-calendar"></i> Browse by Provider
@@ -68,7 +76,7 @@
         <label>Visit Type</label>
         <input type="text" name="visit_type">
 
-        <button type="submit">Request Appointment</button>
+        <button type="button" onclick="showConfirmation()">Request Appointment</button>
     </form>
 </div>
         </div>
@@ -157,7 +165,7 @@
         <p class="modal-note">A confirmation will be sent to your email and phone number.</p>
         <div class="modal-actions">
             <button class="cancel-btn" onclick="closeModal()">Cancel</button>
-             <button type="submit" class="confirm-btn">Confirm Appointment</button>
+             <button type="button" class="confirm-btn" onclick="document.querySelector('form').submit()">Confirm Appointment</button>
         </div>
     </div>
  </div>
@@ -182,6 +190,24 @@
     }
     function goBack() {
         window.location.href = "{% url 'patient_dashboard' %}";
+    }
+
+    function showConfirmation() {
+        const providerSelect = document.querySelector('select[name="provider_id"]');
+        const providerText = providerSelect.options[providerSelect.selectedIndex].text;
+        const date = document.querySelector('input[name="date"]').value
+        const time = document.querySelector('input[name="time"]').value
+        const location = document.querySelector('input[name="location"]').value;
+
+        if (!providerSelect.value || !date || !time) {
+            alert('Please fill in all required fields');
+            return;
+        }
+        document.getElementById('confirm-provider').textContent = providerText;
+        document.getElementById('confirm-date').textContent = date;
+        document.getElementById('confirm-time').textContent = time;
+        document.getElementById('confirm-location').textContent = location || 'TBD';
+        document.getElementById('confirmation-modal').style.display = 'flex';
     }
  </script>
 </body>
