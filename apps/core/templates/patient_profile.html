@@ -17,11 +17,11 @@
         </div>
         <div class="nav-right">
             <button class = "icon-btn"><i class="fa-solid fa-bell"></i></button>
-        <div class="avatar" id="user-avatar">{{ patient.initials }}</div>
+        <div class="avatar" id="user-avatar">{{ patient.user.name|slice:":2" }}</div>
     </div>
     </div>
     <div class="hero">
-        <div class="hero-welcome" id="patient-name">{{ patient.name }}</div>
+        <div class="hero-welcome" id="patient-name">{{ patient.user.name }}</div>
         <div class="hero-sub">Patient Profile</div>
     </div>
 
@@ -30,7 +30,7 @@
             <div class="section-card">
                 <div class="section-header">
                     <span>Personal Information</span>
-                {% if user.role == "ADMIN" %}
+                {% if request.user.role == 'ADMIN' %}
                     <button class="edit-btn" id="personal-info-btn" onclick="openModal('edit-personal-modal')">
                         <i class="fa-solid fa-pen"></i> Edit 
                     </button>
@@ -43,11 +43,11 @@
                 <div class="info-row">
                     <div class="info-item">
                         <label>Full name</label>
-                        <p id="full-name"> {{patient.full_name }}</p>
+                        <p id="full-name"> {{ patient.user.name }}</p>
                     </div>
                     <div class="info-item">
                         <label>Date of Birth</label>
-                        <p id="dob">{{ patient.dob }}</p>
+                        <p id="dob">{{ patient.date_of_birth }}</p>
                     </div>
                 </div>
                 <div class="info-row">
@@ -66,16 +66,16 @@
                 <div class="info-row">
                     <div class="info-item">
                         <label>Phone Number</label>
-                        <p id="phone">{{ patient.phone }}</p>
+                        <p id="phone">{{ patient.user.phone }}</p>
                     </div>
                     <div class="info-item">
                     <label>Email Address</label>
-                    <p id="email">{{ patient.email }}</p>
+                    <p id="email">{{ patient.user.email }}</p>
                     </div>
                 </div>
                     <div class="info-item">
                         <label>Home Address</label>
-                        <p id="address">{{ patient.address }}</p>
+                        <p id="address">{{ patient.street }}, {{ patient.city }}, {{ patient.state }}, {{ patient.zip_code }}</p>
                     </div>
                 </div>
             </div>
@@ -88,15 +88,15 @@
                     </div>
                     <div class="info-item">
                         <label>Full Name</label>
-                        <p id="emergency-name">{{ patient.emergency_name }}</p>
+                        <p id="emergency-name">{{ emergency_contact.first_name }} {{ emergency_contact.last_name }}</p>
                     </div>
                     <div class="info-item">
                         <label>Relationship</label>
-                        <p id="emergency-relationship">{{ patient.emergency_relationship }}</p>
+                        <p id="emergency-relationship">{{ emergency_contact.relationship }}</p>
                     </div>
                     <div class="info-item">
                         <label>Phone number</label>
-                        <p id="emergency-phone">{{ patient.emergency_phone }}</p>
+                        <p id="emergency-phone">{{ emergency_contact.phone }}</p>
                     </div>
                 </div>
                 <div class="section-card">
@@ -114,7 +114,7 @@
                         <p id="policy-number">{{ patient.policy_number }}</p>
                     </div>
                 </div>
-                {% if user.role == "ADMIN" %}
+                {% if user.role == User.Role.ADMIN %}
                 <div class="section-card" id="admin-actions">
                     <div class="section-header">
                         <span>Administrator Actions</span>
