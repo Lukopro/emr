@@ -13,15 +13,19 @@ def main(DB_NAME, DB_USER):
     if not os.path.exists("venv"):
         run("python -m venv venv")
 
-    pip = os.path.join("venv", "Scripts" if IS_WINDOWS else "bin", "pip")
     python = os.path.join("venv", "Scripts" if IS_WINDOWS else "bin", "python")
 
-    run(f"{pip} -m install --upgrade pip")
-    run(f"{pip} -m install django mysqlclient mysql-connector-python python-dotenv")
+    run(f"{python} -m pip install --upgrade pip")
+    run(f"{python} -m pip install django mysqlclient mysql-connector-python python-dotenv")
 
     import mysql.connector
 
     DB_PASSWORD = getpass.getpass(prompt="MySQL password: ")
+
+    with open(".env", "w") as f:
+        f.write(f"DB_NAME={DB_NAME}\n")
+        f.write(f"DB_USER={DB_USER}\n")
+        f.write(f"DB_PASSWORD={DB_PASSWORD}\n")
 
     conn = mysql.connector.connect(
         host="localhost",
@@ -39,11 +43,6 @@ def main(DB_NAME, DB_USER):
 
     print("\nCreating superuser (follow prompts)")
     run(f"{python} manage.py createsuperuser")
-
-    with open(".env", "w") as f:
-        f.write(f"DB_NAME={DB_NAME}\n")
-        f.write(f"DB_USER={DB_USER}\n")
-        f.write(f"DB_PASSWORD={DB_PASSWORD}\n")
 
     print("\n Setup complete, run the server with: ")
     print(f"{python} manage.py runserver")
