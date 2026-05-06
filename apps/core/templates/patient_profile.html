@@ -140,7 +140,8 @@
             </button>
         </div>
         <div class="modal-body">
-            <form method="POST" action="{% url 'update_contact' patient.id %}">
+            <form method="POST" action="{% url 'update_contact' patient.pk %}">
+            <form method="POST" action="{% url 'update_contact' patient.pk %}">
                 {% csrf_token %}
             <div class="input-row">
                 <div class="input-group">
@@ -174,7 +175,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <form method="POST" action="{% url 'update_emergency' patient.id %}">
+            <form method="POST" action="{% url 'update_emergency' patient.pk %}">
                 {% csrf_token %}
             <div class="input-row">
                 <div class="input-group">
@@ -208,7 +209,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <form method="POST" action="{% url 'update_insurance' patient.id %}">
+            <form method="POST" action="{% url 'update_insurance' patient.pk %}">
                 {% csrf_token %}
             <div class="input-row">
                 <div class="input-group">
@@ -237,7 +238,7 @@
             </button>
         </div>
         <div class="modal-body">
-            <form method="POST" action="{% url 'update_personal' patient.id %}">
+            <form method="POST" action="{% url 'update_personal' patient.pk %}">
                 {% csrf_token %}
             <div class="input-row">
                 <div class="input-group">
