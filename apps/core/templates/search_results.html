@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results</title>
+    {% load static %}
+    <link rel="stylesheet" href = "{% static 'global.css' %}" />
+    <link rel="stylesheet" href = "{% static 'search_results.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+</head>
+<body>
+
+    <div class="navbar">
+        <div class="nav-left">
+            <button class="back-btn" onclick="goBack()">
+                <i class="fa-solid fa-arrow-left"></i>
+            </button>
+            <h1>HealthPath</h1>
+        </div>
+        <div class="nav-right">
+            <button class="icon-btn"><i class="fa-solid fa-bell"></i></button>
+            <div class="role-badge">{{ request.user.role }}</div>
+            <div class="avatar">{{ request.user.name|slice:":2" }}</div>
+        </div>
+    </div>
+
+    <div class="hero search-hero">
+        <div class="hero-welcome">Search Results</div>
+        <div class="hero-sub">
+            {% if query %}
+                Showing results for "{{ query }}"
+            {% else %}
+                Enter a search term to find patients
+            {% endif %}
+        </div>
+        <form method="GET" action="{% url 'search_patients' %}">
+            <div class="search-wrapper">
+                <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                <input class="search-bar" type="text" name="query"
+                    value="{{ query }}" placeholder="Search patients by name or ID...">
+            </div>
+        </form>
+    </div>
+
+    <div class="main-content">
+        <div class="left-column">
+            <div class="section-card">
+                <div class="section-header">
+                    <span>Patients</span>
+                    <span class="result-count">
+                        {% if patients %}
+                        {{patients|length }} result{{ patients|length|pluralize }}
+                        {% endif %}
+                    </span>
+                </div>
+                {% for patient in patients %}
+                    <a href="{% url 'patient_profile' patient.user_id %}" class="search-result-item">
+                        <div class="result-avatar">{{ patient.user.name|slice:":2" }}</div>
+                        <div class="result-info">
+                            <p>{{ patient.user.name }}</p>
+                            <small>{{ patient.user.email }} · {{ patient.user.phone }}</small>
+                        </div>
+                        <i class="fa-solid fa-chevron-right result-arrow"></i>
+                    </a>
+                {% empty %}
+                    <p class="placeholder-text">No patients found for "{{ query }}"</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <script>
+        function goBack() {
+            window.location.href = "{% url 'admin_dashboard' %}";
+        }
+    </script>
+    
+</body>
+</html>
