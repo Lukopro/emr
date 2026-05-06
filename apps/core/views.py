@@ -57,7 +57,7 @@ def emr_login(request):
 
     return render(request, 'emr_login.html')
 
-@login_required
+@login_required(login_url="emr_login")
 @user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
 def patient_dashboard(request):
     patient = Patient.objects.get(user=request.user)
@@ -81,15 +81,18 @@ def patient_dashboard(request):
         "records": records,
     })
 
-@login_required
+@login_required(login_url="emr_login")
 @user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
 def patient_profile(request):
-    return render(request, 'patient_profile.html')
+    patient = Patient.objects.get(user=request.user)
+    return render(request, 'patient_profile.html', {
+        "patient": patient,
+    })
 
 def patient_registration(request):
     if request.method == "POST":
         username = request.POST.get('username')
-        password = request.POST.get('password')
+        password = '789'#request.POST.get('password')
         email = request.POST.get('email')
         name = request.POST.get('name')
         phone = request.POST.get('phone')
@@ -122,6 +125,17 @@ def patient_registration(request):
                 "error": "Username already in use"
             })
 
+        emergency_name = request.POST.get('emergency_name')
+        emergency_relationship = request.POST.get('emergency_relationship')
+        emergency_phone = request.POST.get('emergency_phone')
+
+        # If there's any emergency contact info, make sure it's all there
+        if emergency_name or emergency_relationship or emergency_phone:
+            if not emergency_name and emergency_relationship and emergency_phone:
+                return render(request, 'patient_registration.html', {
+                    "error": "Incomplete emergency contact info"
+                })
+
         try:
             with transaction.atomic():
                 user = User.objects.create_user(
@@ -144,11 +158,18 @@ def patient_registration(request):
                     policy_number=policy_number,
                 )
 
+                EmergencyContact.objects.create(
+                    patient=patient,
+                    name=emergency_name,
+                    relationship=emergency_relationship,
+                    phone=emergency_phone,
+                )
+
                 AuditLog.objects.create(
                     user=user,
                     action="CREATE",
                     affected_table=Patient.__name__,
-                    affected_record_id=patient.id,
+                    affected_record_id=patient.user_id,
                     description=(
                         f"Created Patient for new User {username} "
                         f"(User ID: {user.id})"
@@ -178,7 +199,7 @@ def patient_registration(request):
 
     return render(request, 'patient_registration.html')
 
-@login_required
+@login_required(login_url="emr_login")
 @user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
 def appointment_scheduling(request):
     patient = Patient.objects.get(user=request.user)
@@ -284,7 +305,76 @@ def appointment_scheduling(request):
         "providers": providers,
     })
 
-@login_required
+@login_required(login_url="emr_login")
+@user_passes_test(lambda u: u.role in [User.Role.PATIENT, User.Role.ADMIN], login_url="emr_login")
+def update_contact(request, patient_id):
+    if request.user.role == User.Role.PATIENT:
+        patient = get_object_or_404(Patient, pk=patient_id, user=request.user)
+    else:
+        patient = get_object_or_404(Patient, pk=patient_id)
+
+    if request.method == "POST":
+        patient.user.phone = request.POST.get('phone')
+        patient.user.email = request.POST.get('email')
+        patient.address = request.POST.get('address')
+        patient.user.save()
+        patient.save()
+
+    return redirect("patient_profile", patient_id=patient_id)
+
+@login_required(login_url="emr_login")
+@user_passes_test(lambda u: u.role in [User.Role.PATIENT, User.Role.ADMIN], login_url="emr_login")
+def update_emergency(request, patient_id):
+    if request.user.role == User.Role.PATIENT:
+        patient = get_object_or_404(Patient, pk=patient_id, user=request.user)
+    else:
+        patient = get_object_or_404(Patient, pk=patient_id)
+
+    if request.method == "POST":
+        EmergencyContact.objects.update_or_create(
+            patient=patient,
+            defaults={
+                "name": request.POST.get("name"),
+                "relationship": request.POST.get("relationship"),
+                "phone": request.POST.get("phone"),
+            }
+        )
+
+    return redirect("patient_profile", patient_id=patient_id)
+
+@login_required(login_url="emr_login")
+@user_passes_test(lambda u: u.role in [User.Role.PATIENT, User.Role.ADMIN], login_url="emr_login")
+def update_insurance(request, patient_id):
+    if request.user.role == User.Role.PATIENT:
+        patient = get_object_or_404(Patient, pk=patient_id, user=request.user)
+    else:
+        patient = get_object_or_404(Patient, pk=patient_id)
+
+    if request.method == "POST":
+        patient.insurance_provider = request.POST.get('insurance_provider')
+        patient.policy_number = request.POST.get('policy_number')
+        patient.save()
+
+    return redirect("patient_profile", patient_id=patient_id)
+
+@login_required(login_url="emr_login")
+@user_passes_test(lambda u: u.role in [User.Role.PATIENT, User.Role.ADMIN], login_url="emr_login")
+def update_personal(request, patient_id):
+    if request.user.role == User.Role.PATIENT:
+        patient = get_object_or_404(Patient, pk=patient_id, user=request.user)
+    else:
+        patient = get_object_or_404(Patient, pk=patient_id)
+
+    if request.method == "POST":
+        patient.user.name = request.POST.get('name')
+        patient.date_of_birth = request.POST.get('dob')
+        patient.gender = request.POST.get('gender')
+        patient.user.save()
+        patient.save()
+
+    return redirect("patient_profile", patient_id=patient_id)
+
+@login_required(login_url="emr_login")
 def medical_records(request):
     user = request.user
 
@@ -306,7 +396,7 @@ def medical_records(request):
         "can_edit": user.role == User.Role.CLINICAL,
     })
 
-@login_required
+@login_required(login_url="emr_login")
 @user_passes_test(lambda u: u.role == User.Role.CLINICAL, login_url='emr_login')
 def update_record(request):
     if request.method == "POST":
@@ -350,7 +440,7 @@ def update_record(request):
 
     return redirect("medical_records")
 
-@login_required
+@login_required(login_url="emr_login")
 @user_passes_test(lambda u: u.role == User.Role.CLINICAL, login_url='emr_login')
 def clinical_dashboard(request):
     staff = ClinicalStaff.objects.get(user=request.user)
@@ -369,7 +459,7 @@ def clinical_dashboard(request):
         "notifications": notifications
     })
 
-@login_required
+@login_required(login_url="emr_login")
 @user_passes_test(lambda u: u.role == User.Role.ADMIN, login_url='emr_login')
 def admin_dashboard(request):
     users = User.objects.all()
@@ -405,7 +495,7 @@ def logout_view(request):
 
     return redirect("emr_login")
 
-@login_required
+@login_required(login_url="emr_login")
 @user_passes_test(lambda u: u.role == User.Role.ADMIN, login_url='emr_login')
 def create_clinical_staff(request):
     if request.method != "POST":
@@ -486,7 +576,7 @@ def create_clinical_staff(request):
         messages.error(request, f"Error creating staff: {str(e)}")
         return redirect("admin_dashboard")
 
-@login_required
+@login_required(login_url="emr_login")
 @user_passes_test(lambda u: u.role == User.Role.CLINICAL, login_url='emr_login')
 def create_record(request, appointment_id):
     try:

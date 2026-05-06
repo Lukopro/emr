@@ -30,11 +30,9 @@ class Patient(models.Model):
 class EmergencyContact(models.Model):
     patient = models.ForeignKey(Patient, on_delete=models.CASCADE)
 
-    first_name = models.CharField(max_length=50)
-    last_name = models.CharField(max_length=50)
+    name = models.CharField(max_length=50)
     relationship = models.CharField(max_length=50)
     phone = models.CharField(max_length=15)
-    priority = models.IntegerField(default=1)
 
 
 class ClinicalStaff(models.Model):
