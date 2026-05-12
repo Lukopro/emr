@@ -114,7 +114,7 @@
                         <p id="policy-number">{{ patient.policy_number }}</p>
                     </div>
                 </div>
-                {% if user.role == User.Role.ADMIN %}
+                {% if request.user.role == 'ADMIN' %}
                 <div class="section-card" id="admin-actions">
                     <div class="section-header">
                         <span>Administrator Actions</span>

@@ -82,8 +82,10 @@ def patient_dashboard(request):
     })
 
 @login_required(login_url="emr_login")
-@user_passes_test(lambda u: u.role == [User.Role.PATIENT, User.Role.Admin], login_url='emr_login')
 def patient_profile(request, patient_id=None):
+    if request.user.role not in ['PATIENT', 'ADMIN']:
+        return redirect('emr_login')
+    
     if request.user.role == User.Role.ADMIN and patient_id:
         patient = get_object_or_404(Patient, pk=patient_id)
     else:
