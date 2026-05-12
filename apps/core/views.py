@@ -325,11 +325,39 @@ def update_contact(request, patient_id):
         patient = get_object_or_404(Patient, pk=patient_id)
 
     if request.method == "POST":
-        patient.user.phone = request.POST.get('phone')
-        patient.user.email = request.POST.get('email')
-        patient.address = request.POST.get('address')
-        patient.user.save()
-        patient.save()
+        try:
+            with transaction.atomic():
+                patient.user.phone = request.POST.get('phone')
+                patient.user.email = request.POST.get('email')
+                patient.address = request.POST.get('address')
+                patient.user.save()
+                patient.save()
+
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="UPDATE",
+                    affected_table=User.__name__,
+                    affected_record_id=patient.user.id,
+                    description=(
+                        f"Updated contact info for {patient.user.username} "
+                        f"(User ID: {patient.user.id})"
+                    ),
+                    ip_address=request.META.get("REMOTE_ADDR")
+                )
+        except Exception as e:
+            messages.error(request, "Failed to update contact.")
+            AuditLog.objects.create(
+                user=request.user,
+                action="FAILED_UPDATE",
+                affected_table=User.__name__,
+                affected_record_id=patient.user.id,
+                description=(
+                    f"Failed to update contact info for {patient.user.username} "
+                    f"(User ID: {patient.user.id})"
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+            print(e)
 
     return redirect("patient_profile", patient_id=patient_id)
 
@@ -342,14 +370,42 @@ def update_emergency(request, patient_id):
         patient = get_object_or_404(Patient, pk=patient_id)
 
     if request.method == "POST":
-        EmergencyContact.objects.update_or_create(
-            patient=patient,
-            defaults={
-                "name": request.POST.get("name"),
-                "relationship": request.POST.get("relationship"),
-                "phone": request.POST.get("phone"),
-            }
-        )
+        try:
+            with transaction.atomic():
+                ec, _ = EmergencyContact.objects.update_or_create(
+                    patient=patient,
+                    defaults={
+                        "name": request.POST.get("emergency_name"),
+                        "relationship": request.POST.get("emergency_relationship"),
+                        "phone": request.POST.get("emergency_phone"),
+                    }
+                )
+
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="UPDATE",
+                    affected_table=EmergencyContact.__name__,
+                    affected_record_id=ec.id,
+                    description=(
+                        f"Updated emergency contact info for {patient.user.username} "
+                        f"(User ID: {patient.user.id})"
+                    ),
+                    ip_address=request.META.get("REMOTE_ADDR")
+                )
+        except Exception as e:
+            messages.error(request, "Failed to update emergency contact.")
+            AuditLog.objects.create(
+                user=request.user,
+                action="FAILED_UPDATE",
+                affected_table=EmergencyContact.__name__,
+                affected_record_id=0,
+                description=(
+                    f"Failed to update emergency contact info for {patient.user.username} "
+                    f"(User ID: {patient.user.id})"
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+            print(e)
 
     return redirect("patient_profile", patient_id=patient_id)
 
@@ -362,26 +418,82 @@ def update_insurance(request, patient_id):
         patient = get_object_or_404(Patient, pk=patient_id)
 
     if request.method == "POST":
-        patient.insurance_provider = request.POST.get('insurance_provider')
-        patient.policy_number = request.POST.get('policy_number')
-        patient.save()
+        try:
+            with transaction.atomic():
+                patient.insurance_provider = request.POST.get('insurance_provider')
+                patient.policy_number = request.POST.get('policy_number')
+                patient.save()
+
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="UPDATE",
+                    affected_table=Patient.__name__,
+                    affected_record_id=patient.user.id,
+                    description=(
+                        f"Updated insurance info for {patient.user.username} "
+                        f"(User ID: {patient.user.id})"
+                    ),
+                    ip_address=request.META.get("REMOTE_ADDR")
+                )
+        except Exception as e:
+            messages.error(request, "Failed to update insurance info.")
+            AuditLog.objects.create(
+                user=request.user,
+                action="FAILED_UPDATE",
+                affected_table=Patient.__name__,
+                affected_record_id=patient.user.id,
+                description=(
+                    f"Failed to update insurance info for {patient.user.username} "
+                    f"(User ID: {patient.user.id})"
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+            print(e)
+
 
     return redirect("patient_profile", patient_id=patient_id)
 
 @login_required(login_url="emr_login")
-@user_passes_test(lambda u: u.role in [User.Role.PATIENT, User.Role.ADMIN], login_url="emr_login")
+@user_passes_test(lambda u: u.role == User.Role.ADMIN, login_url="emr_login")
 def update_personal(request, patient_id):
-    if request.user.role == User.Role.PATIENT:
-        patient = get_object_or_404(Patient, pk=patient_id, user=request.user)
-    else:
-        patient = get_object_or_404(Patient, pk=patient_id)
+    # Only admins update personal info
+    patient = get_object_or_404(Patient, pk=patient_id)
 
     if request.method == "POST":
-        patient.user.name = request.POST.get('name')
-        patient.date_of_birth = request.POST.get('dob')
-        patient.gender = request.POST.get('gender')
-        patient.user.save()
-        patient.save()
+        try:
+            with transaction.atomic():
+                patient.user.name = request.POST.get('full_name')
+                patient.date_of_birth = request.POST.get('dob')
+                patient.gender = request.POST.get('gender')[0]
+                patient.user.save()
+                patient.save()
+
+                AuditLog.objects.create(
+                    user=request.user,
+                    action="UPDATE",
+                    affected_table=Patient.__name__,
+                    affected_record_id=patient.user.id,
+                    description=(
+                        f"Updated personal info for {patient.user.username} "
+                        f"(User ID: {patient.user.id})"
+                    ),
+                    ip_address=request.META.get("REMOTE_ADDR")
+                )
+        except Exception as e:
+            messages.error(request, "Failed to update personal info.")
+            AuditLog.objects.create(
+                user=request.user,
+                action="FAILED_UPDATE",
+                affected_table=Patient.__name__,
+                affected_record_id=patient.user.id,
+                description=(
+                    f"Failed to update personal info for {patient.user.username} "
+                    f"(User ID: {patient.user.id})"
+                ),
+                ip_address=request.META.get("REMOTE_ADDR")
+            )
+            print(e)
+
 
     return redirect("patient_profile", patient_id=patient_id)
 
