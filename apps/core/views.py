@@ -442,7 +442,7 @@ def update_record(request):
                 affected_record_id=record_id,
                 description=(
                     f"Updated medical record belonging to {record.patient.user.username} "
-                    f"(User ID: {request.patient.user.id})"
+                    f"(User ID: {record.patient.user.id})"
                 ),
                 ip_address=request.META.get("REMOTE_ADDR")
             )

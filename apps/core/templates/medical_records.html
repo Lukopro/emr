@@ -46,16 +46,16 @@
 <div class ="section-card records-card">
     <div class="section-header">
         <span id="records-title">Records</span>
-        {% if can_edit %}
-        <button class="edit-btn" onclick="openRecordModal()">
-            <i class="fa-solid fa-pen"></i> Edit Record
-        </button>
-        {% endif %}
     </div>
     {% for record in records %}
         <div class="appointment-item">
             <p>{{ record.date_created }} - {{ record.visit_summary }}</p>
             <small>{{ record.clinical_staff.user.name }}</small>
+            {% if can_edit %}
+            <button class="edit-btn" onclick="openRecordModal('{{ record.id }}', '{{ record.visit_summary }}', '{{ record.clinical_notes }}', '{{ record.diagnosis }}', '{{ record.treatment_plan }}')">
+                <i class="fa-solid fa-pen"></i> Edit
+            </button>
+            {% endif %}
         </div>
     {% empty %}
     <p class="placeholder-text" id="records-placeholder">No records found</p>
@@ -72,6 +72,8 @@
         <div class="modal-body">
         <form method="POST" action="{% url 'update_record' %}">
             {% csrf_token %}
+            <input type="hidden" name="record_id" id="modal-record-id">
+
             <div class="input-group">
                 <label>Visit Summary</label>
                 <textarea name="visit_summary" placeholder="Enter visit summary.." rows="3"></textarea>
@@ -108,17 +110,27 @@
         clickedTab.classList.add('active-tab');
         const tabName = clickedTab.textContent;
         const placeholder = document.getElementById('records-placeholder');
-
-        if (tabName === 'Visits') {
-            placeholder.textContent = 'No visits found';
-        } else if (tabName ==='Prescriptions') {
+        if (placeholder) {
+            if (tabName === 'Visits') {
+                placeholder.textContent = 'No visits found';
+        }   else if (tabName ==='Prescriptions') {
             placeholder.textContent = 'No prescriptions found';
-        } else if (tabName === 'Test results') {
-            placeholder.textContent = 'No test results found';
+        }   else if (tabName === 'Test results') {
+                placeholder.textContent = 'No test results found';
         }
     }
-    function openRecordModal(){
-        document.getElementById('edit-record-modal').style.display ='flex';
+        
+    }
+    function openRecordModal(recordId, visitSummary, clinicalNotes, diagnosis, treatmentPlan) {
+        document.getElementById('modal-record-id').value = recordId;
+        document.getElementById('edit-clinical-notes').value = clinicalNotes;
+        document.getElementById('edit-diagnosis').value = diagnosis;
+        document.getElementById('edit-treatment').value = treatmentPlan;
+        // find visit summary textarea and set it
+        document.querySelector('textarea[name="visit_summary"]').value = visitSummary;
+    
+        document.getElementById('edit-record-modal').style.display = 'flex';
+        
     }
 
     function closeRecordModal(){
