@@ -82,11 +82,20 @@ def patient_dashboard(request):
     })
 
 @login_required(login_url="emr_login")
-@user_passes_test(lambda u: u.role == User.Role.PATIENT, login_url='emr_login')
-def patient_profile(request):
-    patient = Patient.objects.get(user=request.user)
+@user_passes_test(lambda u: u.role == [User.Role.PATIENT, User.Role.Admin], login_url='emr_login')
+def patient_profile(request, patient_id=None):
+    if request.user.role == User.Role.ADMIN and patient_id:
+        patient = get_object_or_404(Patient, pk=patient_id)
+    else:
+        patient = get_object_or_404(Patient, user=request.user)
+
+    emergency_contact = EmergencyContact.objects.filter(
+        patient=patient
+    ).first()
+
     return render(request, 'patient_profile.html', {
         "patient": patient,
+        'emergency_contact': emergency_contact,
     })
 
 def patient_registration(request):
