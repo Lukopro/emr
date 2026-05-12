@@ -736,3 +736,15 @@ def create_record(request, appointment_id):
     return render(request, "create_record.html", {
         "appointment": appointment
     })
+@login_required(login_url="emr_login")
+@user_passes_test(lambda u: u.role == User.Role.ADMIN, login_url='emr_login')
+def search_patients(request):
+    query = request.GET.get('query','')
+    patients = Patient.objects.filter(
+        user__name__icontains=query
+    ).select_related('user')
+
+    return render (request, 'search_results.html', {
+        'patients': patients,
+        'query': query,
+    })
