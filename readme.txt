@@ -16,7 +16,7 @@ Django-based EMR system for a school project. Intended to run on Windows 11. To 
  - http://127.0.0.1:8000/
  - Ensure your browser allows for http connections
 
-Still need:
+TODO:
 - Appointment confirmation and management
 - Clinicians viewing/updating medical records
 - Provider availability viewing
