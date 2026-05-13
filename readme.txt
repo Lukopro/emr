@@ -1,4 +1,5 @@
 Django-based EMR system for a school project. Intended to run on Windows 11. To get set up:
+
 1. Install Python
  - https://www.python.org/downloads/windows/
 2. Install MySQL
@@ -20,5 +21,4 @@ Still need:
 - Clinicians viewing/updating medical records
 - Provider availability viewing
 - Finish notifications and audit logging
-- Patient profile editing?
 - Test result + prescription lifecycle?
