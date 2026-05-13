@@ -88,7 +88,7 @@
                     </div>
                     <div class="info-item">
                         <label>Full Name</label>
-                        <p id="emergency-name">{{ emergency_contact.first_name }} {{ emergency_contact.last_name }}</p>
+                        <p id="emergency-name">{{ emergency_contact.name }}</p>
                     </div>
                     <div class="info-item">
                         <label>Relationship</label>
@@ -141,7 +141,6 @@
         </div>
         <div class="modal-body">
             <form method="POST" action="{% url 'update_contact' patient.pk %}">
-            <form method="POST" action="{% url 'update_contact' patient.pk %}">
                 {% csrf_token %}
             <div class="input-row">
                 <div class="input-group">
@@ -180,16 +179,16 @@
             <div class="input-row">
                 <div class="input-group">
                     <label>Full Name</label>
-                    <input type="text" id="edit-emergency-name" name="emergency_name" value="{{ patient.emergency_name }}" placeholder="Full name">
+                    <input type="text" id="edit-emergency-name" name="name" value="{{ emergency_contact.name }}" placeholder="Full name">
                 </div>
                 <div class ="input-group">
                     <label>Relationship</label>
-                    <input type="text" id="edit-emergency-relationship" name="emergency_relationship" value ="{{ patient.emergency_relationship }}" placeholder="e.g. Spouse, Parent">
+                    <input type="text" id="edit-emergency-relationship" name="relationship" value ="{{ emergency_contact.relationship }}" placeholder="e.g. Spouse, Parent">
                 </div>
             </div>
             <div class="input-group">
                 <label>Phone Number</label>
-                <input type="tel" id="edit-emergency-phone" name="emergency_phone" value="{{ patient.emergency_phone }}" placeholder="Phone number">
+                <input type="tel" id="edit-emergency-phone" name="phone" value="{{ emergency_contact.phone }}" placeholder="Phone number">
             </div>
         </div>
         <div class="modal-actions">
@@ -243,19 +242,19 @@
             <div class="input-row">
                 <div class="input-group">
                 <label>Full Name</label>
-                <input type="text" id="edit-full-name" name="full_name" value="{{ patient.full_name }}" placeholder="Full name">
+                <input type="text" id="edit-full-name" name="name" value="{{ patient.user.name }}" placeholder="Full name">
                 </div>
                 <div class="input-group">
                     <label>Date of Birth</label>
-                    <input type="date" name="dob" id="edit_dob" value="{{ patient.dob }}">
+                    <input type="date" name="dob" id="edit_dob" value="{{ patient.date_of_birth }}">
                 </div>
             </div>
             <div class="input-group">
                 <label>Gender</label>
                 <select name="gender" id="edit-gender">
-                    <option>Male</option>
-                    <option>Female</option>
-                    <option>Prefer not to say</option>
+                    <option value ="M">Male</option>
+                    <option value ="F">Female</option>
+                    <option value ="X">Prefer not to say</option>
                 </select>
             </div>
         </div>

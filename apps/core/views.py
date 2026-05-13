@@ -375,11 +375,12 @@ def update_emergency(request, patient_id):
                 ec, _ = EmergencyContact.objects.update_or_create(
                     patient=patient,
                     defaults={
-                        "name": request.POST.get("emergency_name"),
-                        "relationship": request.POST.get("emergency_relationship"),
-                        "phone": request.POST.get("emergency_phone"),
+                        "name": request.POST.get("name"),
+                        "relationship": request.POST.get("relationship"),
+                        "phone": request.POST.get("phone"),
                     }
                 )
+                
 
                 AuditLog.objects.create(
                     user=request.user,
@@ -462,9 +463,13 @@ def update_personal(request, patient_id):
     if request.method == "POST":
         try:
             with transaction.atomic():
-                patient.user.name = request.POST.get('full_name')
+                patient.user.name = request.POST.get('name')
                 patient.date_of_birth = request.POST.get('dob')
-                patient.gender = request.POST.get('gender')[0]
+                dob = request.POST.get('dob')
+                if dob:
+                    patient.date_of_birth = dob
+                    
+                patient.gender = request.POST.get('gender')
                 patient.user.save()
                 patient.save()
 
@@ -871,3 +876,4 @@ def search_patients(request):
         'patients': patients,
         'query': query,
     })
+

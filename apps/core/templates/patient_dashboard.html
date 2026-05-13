@@ -45,7 +45,7 @@
         <i class ="fa-solid fa-pills qa-icon"></i>
         <div class="qa-label">Medications</div>
     </a>
-    <a href="{% url 'patient_profile' %}"class="qa-card">
+    <a href="{% url 'patient_profile' patient.user_id %}"class="qa-card">
         <i class ="fa-solid fa-user qa-icon"></i>
         <div class="qa-label">My profile</div>
     </a>
