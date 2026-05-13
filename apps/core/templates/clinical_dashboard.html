@@ -37,7 +37,7 @@
         <div class="section-card">
             <div class="section-header">      
                 <span>Todays Schedule</span>
-                <a href="#">View schedule</a>
+                <a href="#" onclick="openModal('all-appointments-modal')">View schedule</a>
             </div>
             {% for appt in appointments %}
             <div class="appointment-item">
@@ -75,10 +75,11 @@
                 <span>Recent Patients</span>
                 <a href="#">View all</a>
             </div>
-            <!--placeholder for recent patients-->
+            
             <p class="placeholder-text">No recent patients</p>
         </div>
     </div>
+
 
     <div class="right-column">
         <div class="section-card">
@@ -100,6 +101,27 @@
         </div>
     </div>
 </div>
+
+<div class="modal-overlay" id="all-appointments-modal" style="display: none;">
+    <div class="modal modal-large">
+        <div class="modal-header">
+            <h2>Full Schedule</h2>
+            <button class="modal-close" onclick="closeModal('all-appointments-modal')">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            {% for appt in all_appointments %}
+            <div class="appointment-item">
+                <p>{{ appt.date }} {{ appt.time }} - {{ appt.patient.user.name }}</p>
+                <small>{{ appt.visit_type }} · {{ appt.location }} · {{ appt.status }}</small>
+            </div>
+            {% empty %}
+                <p class="placeholder-text">No appointments found</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 <script>
     function logout(){
         window.location.href = "{% url 'logout' %}";
@@ -110,6 +132,12 @@
         month: 'long',
         day: 'numeric'
     });
+    function openModal(modalId) {
+        document.getElementById(modalId).style.display = 'flex';
+    }
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
 </script>
 </body>
 </html>

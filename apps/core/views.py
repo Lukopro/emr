@@ -526,6 +526,8 @@ def medical_records(request):
 
     return render(request, 'medical_records.html', {
         "records": records,
+        "prescriptions": Prescription.objects.filter(medical_record__in=records).order_by("-medical_record__date_created"),
+        "test_results": TestResult.objects.filter(medical_record__in=records).order_by("-medical_record__date_created"),
         "can_edit": user.role == User.Role.CLINICAL,
     })
 
@@ -592,10 +594,15 @@ def clinical_dashboard(request):
         user=request.user,
         status=Notification.Status.UNREAD,
     )
+    
+    all_appointments = Appointment.objects.filter(
+        clinical_staff=staff
+    ).order_by("-date", "-time")
 
     return render(request, 'clinical_dashboard.html', {
         "appointments": appointments,
         "confirmed_appointments": confirmed_appointments,
+        "all_appointments": all_appointments,
         "notifications": notifications
     })
 

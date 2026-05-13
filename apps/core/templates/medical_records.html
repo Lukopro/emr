@@ -47,6 +47,7 @@
     <div class="section-header">
         <span id="records-title">Records</span>
     </div>
+    <div id="tab-visits">
     {% for record in records %}
         <div class="appointment-item">
             <p>{{ record.date_created }} - {{ record.visit_summary }}</p>
@@ -58,8 +59,31 @@
             {% endif %}
         </div>
     {% empty %}
-    <p class="placeholder-text" id="records-placeholder">No records found</p>
+        <p class="placeholder-text" id="records-placeholder">No visits found</p>
     {% endfor %}
+</div>
+
+<div id="tab-prescriptions" style="display: none;">
+    {% for prescription in prescriptions %}
+        <div class="appointment-item">
+            <p>{{ prescription.medication_name }} - {{ prescription.dosage }}</p>
+            <small>{{ prescription.frequency }} · {{ prescription.start_date }} to {{ prescription.end_date }} · {{ prescription.status }}</small>
+        </div>
+    {% empty %}
+        <p class="placeholder-text">No prescriptions found</p>
+    {% endfor %}
+</div>
+
+<div id="tab-testresults" style="display: none;">
+    {% for result in test_results %}
+        <div class="appointment-item">
+            <p>{{ result.test_name }} - {{ result.test_date }}</p>
+            <small>{{ result.status }} · {{ result.results }}</small>
+        </div>
+    {% empty %}
+        <p class="placeholder-text">No test results found</p>
+    {% endfor %}
+</div>
 </div>
 <div class="modal-overlay" id="edit-record-modal" style="display: none;">
     <div class="modal modal-large">
@@ -108,18 +132,19 @@
         });
 
         clickedTab.classList.add('active-tab');
-        const tabName = clickedTab.textContent;
-        const placeholder = document.getElementById('records-placeholder');
-        if (placeholder) {
-            if (tabName === 'Visits') {
-                placeholder.textContent = 'No visits found';
-        }   else if (tabName ==='Prescriptions') {
-            placeholder.textContent = 'No prescriptions found';
-        }   else if (tabName === 'Test results') {
-                placeholder.textContent = 'No test results found';
+        const tabName = clickedTab.textContent.trim();
+
+        document.getElementById('tab-visits').style.display = 'none';
+        document.getElementById('tab-prescriptions').style.display = 'none';
+        document.getElementById('tab-testresults').style.display = 'none';
+
+        if (tabName === 'Visits') {
+            document.getElementById('tab-visits').style.display = 'block';
+        } else if (tabName === 'Prescriptions') {
+            document.getElementById('tab-prescriptions').style.display = 'block';
+        } else if (tabName === 'Test results') {
+         document.getElementById('tab-testresults').style.display = 'block';
         }
-    }
-        
     }
     function openRecordModal(recordId, visitSummary, clinicalNotes, diagnosis, treatmentPlan) {
         document.getElementById('modal-record-id').value = recordId;
