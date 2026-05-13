@@ -141,8 +141,8 @@ def patient_registration(request):
         emergency_phone = request.POST.get('emergency_phone')
 
         # If there's any emergency contact info, make sure it's all there
-        if emergency_name or emergency_relationship or emergency_phone:
-            if not emergency_name and emergency_relationship and emergency_phone:
+        if any([emergency_name, emergency_relationship, emergency_phone]):
+            if not all([emergency_name, emergency_relationship, emergency_phone]):
                 return render(request, 'patient_registration.html', {
                     "error": "Incomplete emergency contact info"
                 })
