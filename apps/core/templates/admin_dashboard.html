@@ -44,7 +44,7 @@
         <div class="section-card">
             <div class = "section-header">      
             <span> System activity & audit log </span>
-            <a href ="#"> View full log</a>
+            <a href="{% url 'audit_log' %}">View full log</a>
         </div>
         {% for log in logs %}
         <div class="appointment-item">
@@ -69,7 +69,10 @@
         <div class="section-card">
             <div class = "section-header">      
             <span> Notifications </span>
-            <a href ="#"> Mark all read</a>
+            <form method="POST" action="{% url 'mark_notifications_read' %}">
+                {% csrf_token %}
+                <button type="submit" class="link-btn">Mark all read</button>
+                </form>
         </div>
         {% for notification in notifications %}
         <div class="appointment-item">

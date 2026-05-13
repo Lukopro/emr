@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Audit Log</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'global.css' %}" />
+    <link rel="stylesheet" href="{% static 'audit_log.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-left">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <h1>HealthPath</h1>
+    </div>
+    <div class="nav-right">
+        <button class="icon-btn"><i class="fa-solid fa-bell"></i></button>
+        <div class="role-badge">{{ request.user.role }}</div>
+        <div class="avatar">{{ request.user.name|slice:":2" }}</div>
+    </div>
+</div>
+
+<div class="hero">
+    <div class="hero-welcome">System Audit Log</div>
+    <div class="hero-sub" id="current-date"></div>
+</div>
+
+<div class="main-content">
+    <div class="section-card log-card">
+        <div class="section-header">
+            <span>All Activity</span>
+            <span class="result-count">{{ logs|length }} entries</span>
+        </div>
+        {% for log in logs %}
+        <div class="log-item">
+            <div class="log-action">
+                <span class="action-badge action-{{ log.action|lower }}">{{ log.action }}</span>
+                <p>{{ log.description }}</p>
+            </div>
+            <div class="log-meta">
+                <small>
+                    {% if log.user %}
+                        {{ log.user.name }}
+                    {% else %}
+                        System
+                    {% endif %}
+                    · {{ log.timestamp }}
+                    · {{ log.affected_table }}
+                </small>
+            </div>
+        </div>
+        {% empty %}
+            <p class="placeholder-text">No activity found</p>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    function goBack() {
+        window.location.href = "{% url 'admin_dashboard' %}";
+    }
+    document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+</script>
+
+</body>
+</html>

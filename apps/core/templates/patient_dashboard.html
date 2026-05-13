@@ -56,7 +56,7 @@
         <div class="section-card">
             <div class = "section-header">      
             <span> Upcoming appointments </span>
-            <a href ="#"> View all</a>
+            <a href="#" onclick="openModal('all-appointments-modal')">View all</a>
         </div>
         {% for appt in appointments %}
             <div class = "appointment-item">
@@ -67,11 +67,10 @@
             <p class = "placeholder-text">No upcoming appointments</p>
         {% endfor %}
     </div>
-    <!--placeholder for recent results -->
         <div class="section-card">
             <div class = "section-header">      
             <span> Recent Results </span>
-            <a href ="#"> View all</a>
+            <a href="{% url 'medical_records' %}">View all</a>
             </div>
         <p class="placeholder-text">No recent results</p>
     </div>
@@ -79,9 +78,15 @@
 
     <div class = "right-column">
         <div class="section-card">
-            <div class = "section-header">      
-            <span> Notifications </span>
-            <a href ="#"> Mark all read</a>
+            <div class="section-header">
+                <span>Notifications</span>
+                <div>
+                    <a href="#" onclick="openModal('all-notifications-modal')">View all</a>
+                    <form method="POST" action="{% url 'mark_notifications_read' %}">
+                        {% csrf_token %}
+                        <button type="submit" class="link-btn">Mark all read</button>
+                    </form>
+            </div>
         </div>
         {% for notification in notifications %}
         <div class="appointment-item">
@@ -94,10 +99,57 @@
     </div>
     </div>
   </div>
+  <div class="modal-overlay" id="all-appointments-modal" style="display: none;">
+    <div class="modal modal-large">
+        <div class="modal-header">
+            <h2>All Appointments</h2>
+            <button class="modal-close" onclick="closeModal('all-appointments-modal')">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            {% for appt in appointments %}
+            <div class="appointment-item">
+                <p>{{ appt.date }} - {{ appt.clinical_staff.user.name }}</p>
+                <small>{{ appt.visit_type }} · {{ appt.location }} · {{ appt.status }}</small>
+            </div>
+            {% empty %}
+                <p class="placeholder-text">No appointments found</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+<div class="modal-overlay" id="all-notifications-modal" style="display: none;">
+    <div class="modal modal-large">
+        <div class="modal-header">
+            <h2>All Notifications</h2>
+            <button class="modal-close" onclick="closeModal('all-notifications-modal')">
+                <i class="fa-solid fa-x"></i>
+            </button>
+        </div>
+        <div class="modal-body">
+            {% for notification in all_notifications %}
+            <div class="appointment-item">
+                <p>{{ notification.message }}</p>
+                <small>{{ notification.date_sent }} · {{ notification.status }}</small>
+            </div>
+            {% empty %}
+                <p class="placeholder-text">No notifications found</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
   <script>
+    function openModal(modalId) {
+    document.getElementById(modalId).style.display = 'flex';
+}
+    function closeModal(modalId) {
+    document.getElementById(modalId).style.display = 'none';
+}
     function logout(){
         window.location.href = "{% url 'logout' %}";
     }
+    
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
         weekday: 'long',
         year: 'numeric',

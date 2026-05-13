@@ -67,6 +67,11 @@ def patient_dashboard(request):
     ).order_by("-date", "-time")
 
     notifications = Notification.objects.filter(
+        user=request.user,
+        status=Notification.Status.UNREAD,
+    ).order_by("-date_sent")
+
+    all_notifications = Notification.objects.filter(
         user=request.user
     ).order_by("-date_sent")
 
@@ -78,6 +83,7 @@ def patient_dashboard(request):
         "patient": patient,
         "appointments": appointments,
         "notifications": notifications,
+        "all_notifications": all_notifications,
         "records": records,
     })
 
@@ -583,7 +589,8 @@ def clinical_dashboard(request):
     ).order_by("-date", "-time")
 
     notifications = Notification.objects.filter(
-        user=request.user
+        user=request.user,
+        status=Notification.Status.UNREAD,
     )
 
     return render(request, 'clinical_dashboard.html', {
@@ -599,6 +606,7 @@ def admin_dashboard(request):
     logs = AuditLog.objects.order_by("-timestamp")
     notifications = Notification.objects.filter(
         user=request.user,
+        status=Notification.Status.UNREAD,
     ).order_by("-date_sent")
 
     return render(request, 'admin_dashboard.html', {
@@ -914,3 +922,22 @@ def approve_appointment(request, appointment_id):
         )
 
     return redirect("clinical_dashboard")
+@login_required(login_url="emr_login")
+def mark_notifications_read(request):
+    if request.method == "POST":
+        Notification.objects.filter(
+            user=request.user,
+            status=Notification.Status.UNREAD,
+        ).update(status=Notification.Status.READ)
+    
+    # redirect back to the page they came from
+    return redirect(request.META.get('HTTP_REFERER', 'patient_dashboard'))
+
+
+@login_required(login_url="emr_login")
+@user_passes_test(lambda u: u.role == User.Role.ADMIN, login_url='emr_login')
+def audit_log(request):
+    logs = AuditLog.objects.order_by("-timestamp")
+    return render(request, 'audit_log.html', {
+        'logs': logs,
+    })
