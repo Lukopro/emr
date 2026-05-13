@@ -103,8 +103,8 @@ def patient_profile(request, patient_id=None):
 def patient_registration(request):
     if request.method == "POST":
         username = request.POST.get('username')
-        password = '789'#request.POST.get('password')
         email = request.POST.get('email')
+        password = request.POST.get('password')
         name = request.POST.get('name')
         phone = request.POST.get('phone')
 
@@ -464,11 +464,10 @@ def update_personal(request, patient_id):
         try:
             with transaction.atomic():
                 patient.user.name = request.POST.get('name')
-                patient.date_of_birth = request.POST.get('dob')
                 dob = request.POST.get('dob')
                 if dob:
                     patient.date_of_birth = dob
-                    
+
                 patient.gender = request.POST.get('gender')
                 patient.user.save()
                 patient.save()
@@ -578,12 +577,18 @@ def clinical_dashboard(request):
         status=Appointment.Status.PENDING
     ).order_by("-date", "-time")
 
+    confirmed_appointments = Appointment.objects.filter(
+        clinical_staff=staff,
+        status=Appointment.Status.CONFIRMED
+    ).order_by("-date", "-time")
+
     notifications = Notification.objects.filter(
         user=request.user
     )
 
     return render(request, 'clinical_dashboard.html', {
         "appointments": appointments,
+        "confirmed_appointments": confirmed_appointments,
         "notifications": notifications
     })
 
@@ -747,6 +752,8 @@ def create_record(request, appointment_id):
         # optional test fields
         test_name = request.POST.get("test_name")
         test_date = request.POST.get("test_date")
+        print("test_name:", test_name)
+        print("test_date:", test_date)
         if test_date:
             try:
                 test_date = datetime.strptime(test_date, "%Y-%m-%d").date()
@@ -877,3 +884,33 @@ def search_patients(request):
         'query': query,
     })
 
+
+@login_required(login_url="emr_login")
+@user_passes_test(lambda u: u.role == User.Role.CLINICAL, login_url='emr_login')
+def approve_appointment(request, appointment_id):
+    appointment = get_object_or_404(
+        Appointment, 
+        id=appointment_id, 
+        clinical_staff__user=request.user
+    )
+    
+    if request.method == "POST":
+        appointment.status = Appointment.Status.CONFIRMED
+        appointment.save()
+
+        Notification.objects.create(
+            user=appointment.patient.user,
+            message=f"Your appointment on {appointment.date} at {appointment.time} has been confirmed.",
+            type="APPOINTMENT",
+        )
+
+        AuditLog.objects.create(
+            user=request.user,
+            action="UPDATE",
+            affected_table=Appointment.__name__,
+            affected_record_id=appointment.id,
+            description=f"Confirmed appointment for {appointment.patient.user.name}",
+            ip_address=request.META.get("REMOTE_ADDR")
+        )
+
+    return redirect("clinical_dashboard")

@@ -32,60 +32,81 @@
         <input class ="search-bar" type="text" placeholder="Search patients by name or ID...">
     </div>
   </div>
-<div class = "main-content">
-    <div class = "left-column">
+<div class="main-content">
+    <div class="left-column">
         <div class="section-card">
-            <div class = "section-header">      
-            <span> Todays Schedule </span>
-            <a href ="#"> View schedule</a>
+            <div class="section-header">      
+                <span>Todays Schedule</span>
+                <a href="#">View schedule</a>
+            </div>
+            {% for appt in appointments %}
+            <div class="appointment-item">
+                <p>{{ appt.time }} - {{ appt.patient.user.name }}</p>
+                <small>{{ appt.visit_type }} · {{ appt.location }}</small>
+                <form method="POST" action="{% url 'approve_appointment' appt.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="confirm-btn">Approve</button>
+                </form>
+            </div>
+            {% empty %}
+                <p class="placeholder-text">No appointments scheduled</p>
+            {% endfor %}
         </div>
-        {% for appt in appointments %}
-        <div class="appointment-item">
-            <p>{{ appt.time }} - {{ appt.patient.user.name }}</p>
-            <small>{{ appt.visit_type }} · {{ appt.location }} </small>
-        </div>
-    {% empty %}
-        <p class="placeholder-text">No appointments scheduled</p>
-    {% endfor %}
-    </div>
-    
+
         <div class="section-card">
-            <div class = "section-header">      
-            <span> Recent Patients </span>
-            <a href ="#"> View all</a>
+            <div class="section-header">
+                <span>Confirmed Appointments</span>
+            </div>
+            {% for appt in confirmed_appointments %}
+            <div class="appointment-item">
+                <p>{{ appt.time }} - {{ appt.patient.user.name }}</p>
+                <small>{{ appt.visit_type }} · {{ appt.location }}</small>
+                <a href="{% url 'create_record' appt.id %}" class="edit-btn">
+                    <i class="fa-solid fa-file-medical"></i> Add Record
+                </a>
+            </div>
+            {% empty %}
+                <p class="placeholder-text">No confirmed appointments</p>
+            {% endfor %}
         </div>
+
+        <div class="section-card">
+            <div class="section-header">      
+                <span>Recent Patients</span>
+                <a href="#">View all</a>
+            </div>
             <!--placeholder for recent patients-->
-        <p class="placeholder-text">No recent patients</p>
-    </div>
+            <p class="placeholder-text">No recent patients</p>
+        </div>
     </div>
 
-    <div class = "right-column">
+    <div class="right-column">
         <div class="section-card">
-            <div class = "section-header">      
-            <span> Notifications </span>
-            <a href ="#"> Mark all read</a>
+            <div class="section-header">      
+                <span>Notifications</span>
+                <a href="#">Mark all read</a>
+            </div>
+            {% for notification in notifications %}
+            <div class="appointment-item">
+                <p>{{ notification.message }}</p>
+                <small>{{ notification.date_sent }}</small>
+            </div>
+            {% empty %}
+                <p class="placeholder-text">No notifications</p>
+            {% endfor %}
         </div>
-    {% for notification in notifications %}
-        <div class="appointment-item">
-            <p>{{ notification.message }}</p>
-            <small>{{ notification.date_sent }}</small>
-        </div>
-    {% empty %}
-        <p class="placeholder-text">No notifications</p>
-    {% endfor %}
     </div>
-    </div>
-  </div>
-  <script>
+</div>
+<script>
     function logout(){
         window.location.href = "{% url 'logout' %}";
     }
     document.getElementById('current-date').textContent = new Date().toLocaleDateString('en-US', {
-    weekday: 'long',
-     year: 'numeric',
-      month: 'long',
-       day: 'numeric'
-});
-  </script>
+        weekday: 'long',
+        year: 'numeric',
+        month: 'long',
+        day: 'numeric'
+    });
+</script>
 </body>
 </html>

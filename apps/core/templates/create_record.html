@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Clinical Record</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'global.css' %}" />
+    <link rel="stylesheet" href="{% static 'create_record.css' %}" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+</head>
+<body>
+
+<div class="navbar">
+    <div class="nav-left">
+        <button class="back-btn" onclick="goBack()">
+            <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <h1>HealthPath</h1>
+    </div>
+    <div class="nav-right">
+        <button class="icon-btn"><i class="fa-solid fa-bell"></i></button>
+        <div class="role-badge">{{ request.user.role }}</div>
+        <div class="avatar">{{ request.user.name|slice:":2" }}</div>
+    </div>
+</div>
+
+<div class="hero">
+    <div class="hero-welcome">Create Clinical Record</div>
+    <div class="hero-sub">{{ appointment.patient.user.name }} · {{ appointment.date }} · {{ appointment.visit_type }}</div>
+</div>
+
+{% if messages %}
+    {% for message in messages %}
+        {% if message.tags == 'error' %}
+            <p class="error-message">{{ message }}</p>
+        {% else %}
+            <p class="success-message">{{ message }}</p>
+        {% endif %}
+    {% endfor %}
+{% endif %}
+
+<form method="POST" action="{% url 'create_record' appointment.id %}">
+    {% csrf_token %}
+    
+    <div class="main-content">
+        <div class="left-column">
+
+            <div class="section-card">
+                <div class="section-header">
+                    <span>Visit Details</span>
+                </div>
+                <div class="input-group">
+                    <label>Visit Summary</label>
+                    <textarea name="visit_summary" placeholder="Enter visit summary..." rows="3"></textarea>
+                </div>
+                <div class="input-group">
+                    <label>Clinical Notes</label>
+                    <textarea name="clinical_notes" placeholder="Enter clinical notes..." rows="6"></textarea>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Diagnosis</label>
+                        <input type="text" name="diagnosis" placeholder="Enter diagnosis">
+                    </div>
+                    <div class="input-group">
+                        <label>Treatment Plan</label>
+                        <input type="text" name="treatment_plan" placeholder="Enter treatment plan">
+                    </div>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <span>Prescription</span>
+                    <small class="optional-label">Optional</small>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Medication Name</label>
+                        <input type="text" name="medication_name" placeholder="Medication name">
+                    </div>
+                    <div class="input-group">
+                        <label>Dosage</label>
+                        <input type="text" name="dosage" placeholder="e.g. 500mg">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Frequency</label>
+                        <input type="text" name="frequency" placeholder="e.g. Twice daily">
+                    </div>
+                </div>
+                <div class="input-row">
+                    <div class="input-group">
+                        <label>Start Date</label>
+                        <input type="date" name="start_date">
+                    </div>
+                    <div class="input-group">
+                        <label>End Date</label>
+                        <input type="date" name="end_date">
+                    </div>
+                </div>
+            </div>
+
+        </div>
+        <div class="right-column">
+
+            <div class="section-card">
+                <div class="section-header">
+                    <span>Patient</span>
+                </div>
+                <div class="info-item">
+                    <label>Name</label>
+                    <p>{{ appointment.patient.user.name }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Date of Birth</label>
+                    <p>{{ appointment.patient.date_of_birth }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Visit Type</label>
+                    <p>{{ appointment.visit_type }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Date</label>
+                    <p>{{ appointment.date }}</p>
+                </div>
+                <div class="info-item">
+                    <label>Location</label>
+                    <p>{{ appointment.location }}</p>
+                </div>
+            </div>
+
+            <div class="section-card">
+                <div class="section-header">
+                    <span>Test Result</span>
+                    <small class="optional-label">Optional</small>
+                </div>
+                <div class="input-group">
+                    <label>Test Name</label>
+                    <input type="text" name="test_name" placeholder="Test name">
+                </div>
+                <div class="input-group">
+                    <label>Test Date</label>
+                    <input type="date" name="test_date">
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-actions">
+        <button type="button" class="cancel-btn" onclick="goBack()">Cancel</button>
+        <button type="submit" class="confirm-btn">Save Record</button>
+    </div>
+
+</form>
+
+<script>
+    function goBack() {
+        window.location.href = "{% url 'clinical_dashboard' %}";
+    }
+</script>
+
+</body>
+</html>
